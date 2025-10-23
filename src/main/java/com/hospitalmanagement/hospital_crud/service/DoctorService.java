@@ -1,6 +1,7 @@
 package com.hospitalmanagement.hospital_crud.service;
 
 import com.hospitalmanagement.hospital_crud.entity.Doctor;
+import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
 import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class DoctorService {
 
     public Doctor getDoctorById(Long id) {
         return doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
     }
 
     public Doctor createDoctor(Doctor doctor) {
@@ -30,7 +31,7 @@ public class DoctorService {
 
     public Doctor updateDoctor(Long id, Doctor updatedDoctor) {
         Doctor existingDoctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
 
         existingDoctor.setName(updatedDoctor.getName());
         existingDoctor.setSpecialization(updatedDoctor.getSpecialization());
@@ -41,6 +42,8 @@ public class DoctorService {
     }
 
     public void deleteDoctor(Long id) {
+        Doctor existingDoctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
         doctorRepository.deleteById(id);
     }
 }
