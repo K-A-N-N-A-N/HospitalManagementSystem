@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import java.security.Timestamp;
 
 @Entity
-public class doctor {
+public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
