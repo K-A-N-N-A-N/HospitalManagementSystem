@@ -21,11 +21,19 @@ public class AppointmentResponse {
     // constructor
     public AppointmentResponse(Appointment appointment) {
         this.id = appointment.getId();
-        this.doctorId = appointment.getDoctor().getId();
-        this.patientId = appointment.getPatient().getId();
+
+        if (appointment.getDoctor() != null) {
+            this.doctorId = appointment.getDoctor().getId();
+        }
+
+        if (appointment.getPatient() != null) {
+            this.patientId = appointment.getPatient().getId();
+        }
+
         this.appointmentTime = appointment.getAppointmentTime();
         this.reason = appointment.getReason();
-        this.status = appointment.getStatus().name();
+        this.status = appointment.getStatus() != null ? appointment.getStatus().name() : null;
     }
+
 }
 

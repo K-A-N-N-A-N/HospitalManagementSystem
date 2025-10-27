@@ -39,6 +39,10 @@ public class Appointment {
     @Column(columnDefinition = "TEXT")
     private String reason;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "slot_id")
+    private DoctorSlot slot;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
