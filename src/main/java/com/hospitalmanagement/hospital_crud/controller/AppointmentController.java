@@ -4,9 +4,11 @@ import com.hospitalmanagement.hospital_crud.dto.AppointmentRequest;
 import com.hospitalmanagement.hospital_crud.dto.AppointmentResponse;
 import com.hospitalmanagement.hospital_crud.entity.Appointment;
 import com.hospitalmanagement.hospital_crud.service.AppointmentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/appointments")
@@ -18,10 +20,14 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-    @PostMapping
-    public AppointmentResponse createAppointment(@RequestBody AppointmentRequest request) {
-        Appointment appointment = appointmentService.createAppointment(request);
-        return new AppointmentResponse(appointment);
+    @PostMapping("/book")
+    public ResponseEntity<?> bookAppointment(@RequestBody AppointmentRequest request) {
+        try {
+            Appointment appointment = appointmentService.createAppointment(request);
+            return ResponseEntity.ok(appointment);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")

@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -31,7 +32,7 @@ public class Appointment {
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    private Instant appointmentTime;
+    private LocalDateTime appointmentTime;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;  // BOOKED, COMPLETED, etc.
