@@ -6,6 +6,7 @@ import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorSlotRepository;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -51,6 +52,18 @@ public class DoctorSlotService {
         return slotRepo.saveAll(slots);
     }
 
+    //get All appointment slots for a given doctor
+    public List<DoctorSlot> getAllScheduledSlots(Long docId, LocalDate date) {
+        Doctor doctor = docRepo.findById(docId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        List<DoctorSlot> scheduledSlots = slotRepo.findByDoctorIdAndDate(docId, date);
+
+        return scheduledSlots.stream()
+                .filter(slot -> !slot.isAvailable())
+                .collect(Collectors.toList());
+    }
+
     //get Available Slots for a given doctor (id)
     public List<DoctorSlot> getAvailableSlots(Long doctorId, LocalDate date) {
         Doctor doctor = docRepo.findById(doctorId)
@@ -62,6 +75,23 @@ public class DoctorSlotService {
                 .filter(DoctorSlot::isAvailable)
                 .collect(Collectors.toList());
     }
+
+    // Update the slot to no avialable by the doctor
+    public String updateSlotStatus(Long doctorId, LocalDate date, LocalTime startTime, boolean available) {
+        Doctor doctor = docRepo.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + doctorId));
+
+        DoctorSlot slot = slotRepo.findByDoctorIdAndDateAndStartTime(doctorId, date, startTime)
+                .orElseThrow(() -> new RuntimeException(
+                        "No slot found for Doctor ID " + doctorId + " on " + date + " at " + startTime));
+
+        slot.setAvailable(available);
+        slotRepo.save(slot);
+
+        return "Slot on " + date + " at " + startTime + " for Dr. " + doctor.getName() +
+                " updated to available = " + available;
+    }
+
 
     // Delete all slots for a doctor on a given date
     public String deleteSlotsForDate(Long docId, LocalDate date) {
@@ -77,6 +107,5 @@ public class DoctorSlotService {
         slotRepo.deleteAll(slots);
         return "Deleted " + slots.size() + " slots for Doctor " + doctor.getName() + " on " + date;
     }
-
 
 }

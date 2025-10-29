@@ -2,6 +2,7 @@ package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.dto.DoctorSlotResponse;
 import com.hospitalmanagement.hospital_crud.dto.SlotRequestDTO;
+import com.hospitalmanagement.hospital_crud.dto.UpdateSlotDTO;
 import com.hospitalmanagement.hospital_crud.entity.DoctorSlot;
 import com.hospitalmanagement.hospital_crud.service.DoctorSlotService;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,17 @@ public class DoctorSlotController {
         return ResponseEntity.ok(slots);
     }
 
+    // Get all Scheduled Slots for a specific doctor
+    @PostMapping("/scheduledSlots")
+    public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestBody SlotRequestDTO request) {
+        List<DoctorSlotResponse> slots = slotService
+                .getAllScheduledSlots(request.getDoctorId(), request.getDate())
+                .stream()
+                .map(DoctorSlotResponse::new)
+                .toList();
+        return ResponseEntity.ok(slots);
+    }
+
     // Get available slots for a doctor on a specific date
     @PostMapping("/available")
     public ResponseEntity<List<DoctorSlotResponse>> getAvailableSlots(@RequestBody SlotRequestDTO request) {
@@ -36,6 +48,18 @@ public class DoctorSlotController {
                 .toList();
 
         return ResponseEntity.ok(slots);
+    }
+
+    //Update Slot Availability
+    @PostMapping("/updateSlot")
+    public ResponseEntity<String> updateSlot(@RequestBody UpdateSlotDTO request) {
+        String message = slotService.updateSlotStatus(
+                request.getDoctorId(),
+                request.getDate(),
+                request.getStartTime(),
+                request.isAvailable()
+        );
+        return ResponseEntity.ok(message);
     }
 
     @DeleteMapping("/delete")
