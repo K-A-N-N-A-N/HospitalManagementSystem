@@ -1,5 +1,6 @@
 package com.hospitalmanagement.hospital_crud.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -20,9 +23,14 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String medicineName;
-    private String dosage;
-    private String notes;
+    // later link these to doctor, patient, appointment
+    // @ManyToOne private Doctor doctor;
+    // @ManyToOne private Patient patient;
+    // @OneToOne private Appointment appointment;
+
+    @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PrescriptionItem> medicines = new ArrayList<>();
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
