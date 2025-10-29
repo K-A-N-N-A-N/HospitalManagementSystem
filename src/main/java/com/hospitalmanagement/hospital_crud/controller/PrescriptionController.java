@@ -1,5 +1,6 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
+import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
 import com.hospitalmanagement.hospital_crud.entity.Prescription;
 import com.hospitalmanagement.hospital_crud.service.PrescriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,27 +15,23 @@ public class PrescriptionController {
     @Autowired
     private PrescriptionService prescriptionService;
 
-    public PrescriptionController(PrescriptionService prescriptionService) {
-        this.prescriptionService = prescriptionService;
-    }
-
     @GetMapping
-    public List<Prescription> getALlPrescriptions() {
-        return prescriptionService.getAllPrescription();
+    public List<PrescriptionDTO> getALlPrescriptions() {
+        return prescriptionService.getAllPrescriptions();
     }
 
     @GetMapping("/{id}")
-    public Prescription getPrescriptionById(@PathVariable long id) {
+    public PrescriptionDTO getPrescriptionById(@PathVariable long id) {
         return prescriptionService.getPrescriptionById(id);
     }
 
     @PostMapping
-    public Prescription addPrescription(@RequestBody Prescription prescription) {
+    public PrescriptionDTO addPrescription(@RequestBody PrescriptionDTO prescription) {
         return prescriptionService.createPrescription(prescription);
     }
 
     @PutMapping("/{id}")
-    public Prescription updatePrescription(@PathVariable long id, @RequestBody Prescription prescription) {
+    public PrescriptionDTO updatePrescription(@PathVariable long id, @RequestBody PrescriptionDTO prescription) {
         return prescriptionService.updatePrescription(id, prescription);
     }
 

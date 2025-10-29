@@ -1,6 +1,5 @@
 package com.hospitalmanagement.hospital_crud.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +21,6 @@ public class PrescriptionItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "prescription_id")
-    @JsonBackReference
     private Prescription prescription;
 
 }

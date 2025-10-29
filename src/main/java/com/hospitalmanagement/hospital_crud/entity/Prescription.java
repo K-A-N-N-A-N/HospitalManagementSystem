@@ -1,6 +1,5 @@
 package com.hospitalmanagement.hospital_crud.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,7 +28,6 @@ public class Prescription {
     // @OneToOne private Appointment appointment;
 
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<PrescriptionItem> medicines = new ArrayList<>();
 
     @CreatedDate
