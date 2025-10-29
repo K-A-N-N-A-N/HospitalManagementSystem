@@ -29,4 +29,8 @@ public interface DoctorSlotRepository extends JpaRepository<DoctorSlot, Long> {
             @Param("doctorId") Long doctorId,
             @Param("date") LocalDate date,
             @Param("time") LocalTime time);
+
+    // Get a Specific Slot for a doctor on a given Date
+    Optional<DoctorSlot> findByDoctorIdAndDateAndStartTime(Long doctorId, LocalDate date, LocalTime startTime);
+
 }
