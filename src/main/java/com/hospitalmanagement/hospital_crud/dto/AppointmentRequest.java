@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -12,6 +12,6 @@ import java.time.Instant;
 public class AppointmentRequest {
     private Long doctorId;
     private Long patientId;
-    private Instant appointmentTime;
+    private LocalDateTime appointmentTime;
     private String reason;
 }

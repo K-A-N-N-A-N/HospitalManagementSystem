@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,18 +14,26 @@ public class AppointmentResponse {
     private Long id;
     private Long doctorId;
     private Long patientId;
-    private Instant appointmentTime;
+    private LocalDateTime appointmentTime;
     private String reason;
     private String status;
 
     // constructor
     public AppointmentResponse(Appointment appointment) {
         this.id = appointment.getId();
-        this.doctorId = appointment.getDoctor().getId();
-        this.patientId = appointment.getPatient().getId();
+
+        if (appointment.getDoctor() != null) {
+            this.doctorId = appointment.getDoctor().getId();
+        }
+
+        if (appointment.getPatient() != null) {
+            this.patientId = appointment.getPatient().getId();
+        }
+
         this.appointmentTime = appointment.getAppointmentTime();
         this.reason = appointment.getReason();
-        this.status = appointment.getStatus().name();
+        this.status = appointment.getStatus() != null ? appointment.getStatus().name() : null;
     }
+
 }
 
