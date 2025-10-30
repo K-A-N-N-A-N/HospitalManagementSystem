@@ -2,6 +2,7 @@ package com.hospitalmanagement.hospital_crud.mapper;
 
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionItemDTO;
+import com.hospitalmanagement.hospital_crud.entity.Appointment;
 import com.hospitalmanagement.hospital_crud.entity.Prescription;
 import com.hospitalmanagement.hospital_crud.entity.PrescriptionItem;
 
@@ -14,6 +15,7 @@ public class PrescriptionMapper {
         dto.setId(prescription.getId());
         dto.setCreatedAt(prescription.getCreatedAt());
         dto.setUpdatedAt(prescription.getUpdatedAt());
+        dto.setAppointment_id(prescription.getAppointment().getId());
 
         if (prescription.getMedicines() != null) {
             dto.setMedicines(
@@ -35,6 +37,11 @@ public class PrescriptionMapper {
         prescription.setId(dto.getId());
         prescription.setCreatedAt(dto.getCreatedAt());
         prescription.setUpdatedAt(dto.getUpdatedAt());
+
+        //Convert DTO appointment_id -> Appointment Refrence
+        Appointment appointment = new Appointment();
+        appointment.setId(dto.getAppointment_id());
+        prescription.setAppointment(appointment);
 
         if (dto.getMedicines() != null) {
             prescription.setMedicines(

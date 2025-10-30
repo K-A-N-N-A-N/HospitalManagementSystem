@@ -25,7 +25,9 @@ public class Prescription {
     // later link these to doctor, patient, appointment
     // @ManyToOne private Doctor doctor;
     // @ManyToOne private Patient patient;
-    // @OneToOne private Appointment appointment;
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = false)
+    private Appointment appointment;
 
     @OneToMany(mappedBy = "prescription", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PrescriptionItem> medicines = new ArrayList<>();
