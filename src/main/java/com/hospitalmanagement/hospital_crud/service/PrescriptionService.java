@@ -3,6 +3,7 @@ package com.hospitalmanagement.hospital_crud.service;
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionItemDTO;
 import com.hospitalmanagement.hospital_crud.entity.Appointment;
+import com.hospitalmanagement.hospital_crud.entity.AppointmentStatus;
 import com.hospitalmanagement.hospital_crud.entity.Prescription;
 import com.hospitalmanagement.hospital_crud.entity.PrescriptionItem;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
@@ -45,8 +46,12 @@ public class PrescriptionService {
             Appointment appointment = appointmentRepository.findById(dto.getAppointment_id())
                     .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + dto.getAppointment_id()));
             prescription.setAppointment(appointment);
-        }
 
+            //Update the Appointment Status to Completed
+            appointment.setStatus(AppointmentStatus.COMPLETED);
+            appointmentRepository.save(appointment);
+
+        }
         // Link Each Medicine to prescriptions
         if (prescription.getMedicines() != null) {
             prescription.getMedicines().forEach(item -> item.setPrescription(prescription));
