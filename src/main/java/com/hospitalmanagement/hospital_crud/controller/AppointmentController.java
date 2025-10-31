@@ -4,6 +4,7 @@ import com.hospitalmanagement.hospital_crud.dto.AppointmentRequest;
 import com.hospitalmanagement.hospital_crud.dto.AppointmentResponse;
 import com.hospitalmanagement.hospital_crud.entity.Appointment;
 import com.hospitalmanagement.hospital_crud.service.AppointmentService;
+import com.hospitalmanagement.hospital_crud.service.AppointmentSummaryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +16,11 @@ import java.util.Map;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final AppointmentSummaryService appointmentSummaryService;
 
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, AppointmentSummaryService appointmentSummaryService) {
         this.appointmentService = appointmentService;
+        this.appointmentSummaryService = appointmentSummaryService;
     }
 
     @PostMapping("/book")
@@ -55,4 +58,12 @@ public class AppointmentController {
         appointmentService.deleteAppointment(id);
         return "Appointment deleted successfully";
     }
+
+    //Display Appointment Summary
+    @GetMapping("/summary/{id}")
+    public ResponseEntity<?> getAppointmentSummary(@PathVariable Long id) {
+        Object result = appointmentSummaryService.getAppointmentSummary(id);
+        return ResponseEntity.ok(result);
+    }
+
 }
