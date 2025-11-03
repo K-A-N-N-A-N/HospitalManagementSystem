@@ -22,9 +22,6 @@ public class Prescription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // later link these to doctor, patient, appointment
-    // @ManyToOne private Doctor doctor;
-    // @ManyToOne private Patient patient;
     @ManyToOne
     @JoinColumn(name = "appointment_id", nullable = false)
     private Appointment appointment;
