@@ -6,7 +6,6 @@ import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorSlotRepository;
 import org.springframework.stereotype.Service;
 
-import javax.print.Doc;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -23,31 +22,35 @@ public class DoctorSlotService {
         this.docRepo = docRepo;
     }
 
-    //Generte Default SLots
-    public List<DoctorSlot> generateDefaultSlots(Long docId, LocalDate date) {
+    // Generate slots with customizable duration
+    public List<DoctorSlot> generateSlots(Long docId, LocalDate date, int slotDurationMinutes) {
         Doctor doctor = docRepo.findById(docId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + docId));
 
-        List<LocalTime[]> defaultSlots = List.of(
-                new LocalTime[]{LocalTime.of(9,0),LocalTime.of(10,0)},
-                new LocalTime[]{LocalTime.of(10, 0), LocalTime.of(11, 0)},
-                new LocalTime[]{LocalTime.of(11, 0), LocalTime.of(12, 0)},
-                new LocalTime[]{LocalTime.of(12, 0), LocalTime.of(13, 0)},
-                new LocalTime[]{LocalTime.of(14, 0), LocalTime.of(15, 0)},
-                new LocalTime[]{LocalTime.of(15, 0), LocalTime.of(16, 0)},
-                new LocalTime[]{LocalTime.of(16, 0), LocalTime.of(17, 0)}
-        );
+        if (slotDurationMinutes <= 0 || slotDurationMinutes > 120) {
+            throw new IllegalArgumentException("Slot duration must be between 1 and 120 minutes");
+        }
 
-        List<DoctorSlot> slots = defaultSlots.stream()
-                .map(t -> DoctorSlot.builder()
-                        .doctor(doctor)
-                        .date(date)
-                        .startTime(t[0])
-                        .endTime(t[1])
-                        .available(true)
-                        .build()
-                )
-                .collect(Collectors.toList());
+        // Define working hours (customize if needed)
+        LocalTime startOfDay = LocalTime.of(9, 0);
+        LocalTime endOfDay = LocalTime.of(17, 0);
+
+        List<DoctorSlot> slots = new java.util.ArrayList<>();
+
+        for (LocalTime time = startOfDay; time.isBefore(endOfDay); time = time.plusMinutes(slotDurationMinutes)) {
+            LocalTime endTime = time.plusMinutes(slotDurationMinutes);
+
+            // Don’t go beyond working hours
+            if (endTime.isAfter(endOfDay)) break;
+
+            slots.add(DoctorSlot.builder()
+                    .doctor(doctor)
+                    .date(date)
+                    .startTime(time)
+                    .endTime(endTime)
+                    .available(true)
+                    .build());
+        }
 
         return slotRepo.saveAll(slots);
     }

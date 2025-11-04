@@ -24,8 +24,8 @@ public class DoctorSlotController {
 
     // Generate default slots for a doctor on a date
     @PostMapping("/generate")
-    public ResponseEntity<List<DoctorSlot>> generateDefaultSlots(@RequestBody SlotRequestDTO request) {
-        List<DoctorSlot> slots = slotService.generateDefaultSlots(request.getDoctorId(), request.getDate());
+    public ResponseEntity<List<DoctorSlot>> generateSlots(@RequestBody SlotRequestDTO request) {
+        List<DoctorSlot> slots = slotService.generateSlots(request.getDoctorId(), request.getDate(), request.getDurationMinutes());
         return ResponseEntity.ok(slots);
     }
 
