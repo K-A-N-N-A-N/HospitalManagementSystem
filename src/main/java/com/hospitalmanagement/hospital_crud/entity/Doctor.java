@@ -23,6 +23,7 @@ public class Doctor {
     private String specialization;
     private String contactInfo;
     private String photoPath;
+    private Boolean active = true;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
