@@ -16,14 +16,19 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping
+    @GetMapping("active")
     public List<Patient> getAllPatients() {
-        return patientService.getAllPatients();
+        return patientService.getAllActivePatients();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("active/{id}")
     public Patient getPatientById(@PathVariable Long id) {
-        return patientService.getPatientById(id);
+        return patientService.getActivePatientById(id);
+    }
+
+    @GetMapping("inactive")
+    public List<Patient> getPatientByIdInactive() {
+        return patientService.getAllInactivePatients();
     }
 
     @PostMapping
@@ -36,10 +41,16 @@ public class PatientController {
         return patientService.updatePatient(id, patient);
     }
 
-    @DeleteMapping("/{id}")
-    public String deletePatient(@PathVariable Long id) {
+    @DeleteMapping("softDelete/{id}")
+    public String softDeletePatient(@PathVariable Long id) {
+        patientService.softDeletePatient(id);
+        return "Patient status set to Inactive.";
+    }
+
+    @DeleteMapping("delete/{id}")
+    public String deletePatientById(@PathVariable Long id) {
         patientService.deletePatient(id);
-        return "Patient Deleted Successfully.";
+        return "Patient deleted successfully.";
     }
 
 }

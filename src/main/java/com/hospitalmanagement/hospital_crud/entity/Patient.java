@@ -25,6 +25,7 @@ public class Patient {
     private String gender;
     private String contactInfo;
     private String address;
+    private Boolean active = true;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

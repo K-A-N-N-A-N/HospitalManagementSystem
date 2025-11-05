@@ -16,6 +16,22 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
+    // Get all Active patients
+    public List<Patient> getAllActivePatients() {
+        return patientRepository.findByActiveTrue();
+    }
+
+    // Get All Inactive patients
+    public List<Patient> getAllInactivePatients() {
+        return patientRepository.findByActiveFalse();
+    }
+
+    // Get Active Patient by Id
+    public Patient getActivePatientById(Long id) {
+        return patientRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found, Try a different Patient id"));
+    }
+
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
@@ -40,6 +56,13 @@ public class PatientService {
         excistingPatient.setContactInfo(updatedPatient.getContactInfo());
 
         return patientRepository.save(excistingPatient);
+    }
+
+    public void softDeletePatient(Long id) {
+        Patient existingPatient = patientRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or already Inactive"));
+        existingPatient.setActive(false);
+        patientRepository.save(existingPatient);
     }
 
     public void deletePatient(Long id) {
