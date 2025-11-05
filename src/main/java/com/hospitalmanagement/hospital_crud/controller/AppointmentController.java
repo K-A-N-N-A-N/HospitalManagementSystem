@@ -47,10 +47,24 @@ public class AppointmentController {
                 .toList();
     }
 
+    @GetMapping("/active")
+    public List<AppointmentResponse> getAllActiveAppointments() {
+        return appointmentService.getAllActiveAppointments()
+                .stream()
+                .map(AppointmentResponse::new)
+                .toList();
+    }
+
     @GetMapping("/{id}")
     public AppointmentResponse getAppointment(@PathVariable Long id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
         return new AppointmentResponse(appointment);
+    }
+
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<String> cancelAppointment(@PathVariable Long id) {
+        String msg = appointmentService.cancelAppointment(id);
+        return ResponseEntity.ok(msg);
     }
 
     @DeleteMapping("/{id}")
