@@ -2,6 +2,7 @@ package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.entity.Patient;
 import com.hospitalmanagement.hospital_crud.service.PatientService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,12 +33,12 @@ public class PatientController {
     }
 
     @PostMapping
-    public Patient createPatient(@RequestBody Patient patient) {
+    public Patient createPatient(@Valid @RequestBody Patient patient) {
         return patientService.createPatient(patient);
     }
 
     @PutMapping("/{id}")
-    public Patient updatePatient(@PathVariable Long id, @RequestBody Patient patient) {
+    public Patient updatePatient(@PathVariable Long id,@Valid @RequestBody Patient patient) {
         return patientService.updatePatient(id, patient);
     }
 

@@ -26,7 +26,7 @@ public class PatientService {
         return patientRepository.findByActiveFalse();
     }
 
-    // Get Active Patient by Id
+    // Get Active Patient by id
     public Patient getActivePatientById(Long id) {
         return patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
@@ -53,7 +53,9 @@ public class PatientService {
         excistingPatient.setAddress(updatedPatient.getAddress());
         excistingPatient.setAge(updatedPatient.getAge());
         excistingPatient.setGender(updatedPatient.getGender());
-        excistingPatient.setContactInfo(updatedPatient.getContactInfo());
+        excistingPatient.setEmail(updatedPatient.getEmail());
+        excistingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
+        //excistingPatient.setContactInfo(updatedPatient.getContactInfo());
 
         return patientRepository.save(excistingPatient);
     }

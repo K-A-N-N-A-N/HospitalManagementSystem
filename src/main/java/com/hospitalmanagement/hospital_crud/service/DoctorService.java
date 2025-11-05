@@ -40,7 +40,9 @@ public class DoctorService {
 
         existingDoctor.setName(updatedDoctor.getName());
         existingDoctor.setSpecialization(updatedDoctor.getSpecialization());
-        existingDoctor.setContactInfo(updatedDoctor.getContactInfo());
+        existingDoctor.setPhoneNumber(updatedDoctor.getPhoneNumber());
+        existingDoctor.setEmail(updatedDoctor.getEmail());
+        //existingDoctor.setContactInfo(updatedDoctor.getContactInfo());
         existingDoctor.setPhotoPath(updatedDoctor.getPhotoPath());
 
         return doctorRepository.save(existingDoctor);
