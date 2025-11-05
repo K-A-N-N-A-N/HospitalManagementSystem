@@ -28,7 +28,7 @@ public class AppointmentSummaryService {
 
     public Object getAppointmentSummary(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
         // If not completed, return a friendly message instead of throwing an exception
         if (appointment.getStatus() != AppointmentStatus.COMPLETED) {

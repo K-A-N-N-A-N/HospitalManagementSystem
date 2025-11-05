@@ -41,16 +41,16 @@ public class PatientController {
         return patientService.updatePatient(id, patient);
     }
 
-    @DeleteMapping("softDelete/{id}")
+    @DeleteMapping("delete/{id}")
     public String softDeletePatient(@PathVariable Long id) {
         patientService.softDeletePatient(id);
         return "Patient status set to Inactive.";
     }
-
+/*
     @DeleteMapping("delete/{id}")
     public String deletePatientById(@PathVariable Long id) {
         patientService.deletePatient(id);
         return "Patient deleted successfully.";
     }
-
+*/
 }

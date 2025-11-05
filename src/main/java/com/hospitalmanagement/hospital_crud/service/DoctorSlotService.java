@@ -25,7 +25,7 @@ public class DoctorSlotService {
     // Generate slots with customizable duration
     public List<DoctorSlot> generateSlots(Long docId, LocalDate date, int slotDurationMinutes) {
         Doctor doctor = docRepo.findById(docId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + docId));
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         if (slotDurationMinutes <= 0 || slotDurationMinutes > 120) {
             throw new IllegalArgumentException("Slot duration must be between 1 and 120 minutes");
@@ -82,11 +82,11 @@ public class DoctorSlotService {
     // Update the slot to no avialable by the doctor
     public String updateSlotStatus(Long doctorId, LocalDate date, LocalTime startTime, boolean available) {
         Doctor doctor = docRepo.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + doctorId));
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         DoctorSlot slot = slotRepo.findByDoctorIdAndDateAndStartTime(doctorId, date, startTime)
                 .orElseThrow(() -> new RuntimeException(
-                        "No slot found for Doctor ID " + doctorId + " on " + date + " at " + startTime));
+                        "No slot found for Doctor on " + date + " at " + startTime));
 
         slot.setAvailable(available);
         slotRepo.save(slot);
@@ -99,7 +99,7 @@ public class DoctorSlotService {
     // Delete all slots for a doctor on a given date
     public String deleteSlotsForDate(Long docId, LocalDate date) {
         Doctor doctor = docRepo.findById(docId)
-                .orElseThrow(() -> new RuntimeException("Doctor with ID " + docId + " not found"));
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         List<DoctorSlot> slots = slotRepo.findByDoctorIdAndDate(docId, date);
 

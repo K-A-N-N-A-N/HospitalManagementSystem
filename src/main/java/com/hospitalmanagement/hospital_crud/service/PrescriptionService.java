@@ -35,7 +35,7 @@ public class PrescriptionService {
 
     public PrescriptionDTO getPrescriptionById(Long id) {
         Prescription prescription = prescriptionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
         return PrescriptionMapper.toDTO(prescription);
     }
 
@@ -44,7 +44,7 @@ public class PrescriptionService {
 
         if (dto.getAppointment_id() != null) {
             Appointment appointment = appointmentRepository.findById(dto.getAppointment_id())
-                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + dto.getAppointment_id()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
             prescription.setAppointment(appointment);
 
             //Update the Appointment Status to Completed
@@ -63,11 +63,11 @@ public class PrescriptionService {
 
     public PrescriptionDTO updatePrescription(Long id, PrescriptionDTO updatedDto) {
         Prescription existing = prescriptionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
 
         if (updatedDto.getAppointment_id() != null) {
             Appointment appointment = appointmentRepository.findById((updatedDto.getAppointment_id()))
-                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + updatedDto.getAppointment_id()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
             existing.setAppointment(appointment);
         }
 
@@ -90,7 +90,7 @@ public class PrescriptionService {
 
     public void deletePrescription(Long id) {
         Prescription existing = prescriptionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
         prescriptionRepository.delete(existing);
     }
 }

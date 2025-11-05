@@ -29,7 +29,7 @@ public class PatientService {
     // Get Active Patient by Id
     public Patient getActivePatientById(Long id) {
         return patientRepository.findByIdAndActiveTrue(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found, Try a different Patient id"));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 
     public List<Patient> getAllPatients() {
@@ -38,7 +38,7 @@ public class PatientService {
 
     public Patient getPatientById(Long id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 
     public  Patient createPatient(Patient patient) {
@@ -47,7 +47,7 @@ public class PatientService {
 
     public Patient updatePatient(Long id, Patient updatedPatient) {
         Patient excistingPatient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         excistingPatient.setName(updatedPatient.getName());
         excistingPatient.setAddress(updatedPatient.getAddress());
@@ -67,7 +67,7 @@ public class PatientService {
 
     public void deletePatient(Long id) {
         Patient excistingPatient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         patientRepository.delete(excistingPatient);
     }
