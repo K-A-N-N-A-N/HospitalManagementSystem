@@ -1,5 +1,6 @@
 package com.hospitalmanagement.hospital_crud.service;
 
+import com.hospitalmanagement.hospital_crud.dto.AppointmentSummaryDTO;
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionItemDTO;
 import com.hospitalmanagement.hospital_crud.entity.Appointment;
@@ -20,10 +21,19 @@ public class PrescriptionService {
 
     private final PrescriptionRepository prescriptionRepository;
     private final AppointmentRepository appointmentRepository;
+    private final AppointmentSummaryService appointmentSummaryService;
+    private final PatientVisitHistoryService patientVisitHistoryService;
 
-    public PrescriptionService(PrescriptionRepository prescriptionRepository, AppointmentRepository appointmentRepository) {
+
+    public PrescriptionService(
+            PrescriptionRepository prescriptionRepository,
+            AppointmentRepository appointmentRepository,
+            AppointmentSummaryService appointmentSummaryService,
+            PatientVisitHistoryService patientVisitHistoryService) {
         this.prescriptionRepository = prescriptionRepository;
         this.appointmentRepository = appointmentRepository;
+        this.appointmentSummaryService = appointmentSummaryService;
+        this.patientVisitHistoryService = patientVisitHistoryService;
     }
 
     public List<PrescriptionDTO> getAllPrescriptions() {
@@ -58,6 +68,14 @@ public class PrescriptionService {
         }
 
         Prescription saved = prescriptionRepository.save(prescription);
+
+        // Create Appointment Summary for the appointment after prescription
+        AppointmentSummaryDTO summaryDTO = (AppointmentSummaryDTO)
+                appointmentSummaryService.getAppointmentSummary(saved.getAppointment().getId());
+
+        // Attach the summary to the patient Visit History Table
+        patientVisitHistoryService.recordPatientVisitHistory(summaryDTO);
+
         return PrescriptionMapper.toDTO(saved);
     }
 

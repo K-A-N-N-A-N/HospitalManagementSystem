@@ -28,10 +28,12 @@ public class AppointmentService {
     public AppointmentService(
             AppointmentRepository appointmentRepository,
             DoctorRepository doctorRepository,
-            PatientRepository patientRepository) {
+            PatientRepository patientRepository,
+            DoctorSlotRepository slotRepository) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.slotRepository = slotRepository;
     }
 
     public Appointment createAppointment(AppointmentRequest request) {
