@@ -16,13 +16,29 @@ public class PatientService {
         this.patientRepository = patientRepository;
     }
 
+    // Get all Active patients
+    public List<Patient> getAllActivePatients() {
+        return patientRepository.findByActiveTrue();
+    }
+
+    // Get All Inactive patients
+    public List<Patient> getAllInactivePatients() {
+        return patientRepository.findByActiveFalse();
+    }
+
+    // Get Active Patient by id
+    public Patient getActivePatientById(Long id) {
+        return patientRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
+    }
+
     public List<Patient> getAllPatients() {
         return patientRepository.findAll();
     }
 
     public Patient getPatientById(Long id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
 
     public  Patient createPatient(Patient patient) {
@@ -31,20 +47,29 @@ public class PatientService {
 
     public Patient updatePatient(Long id, Patient updatedPatient) {
         Patient excistingPatient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         excistingPatient.setName(updatedPatient.getName());
         excistingPatient.setAddress(updatedPatient.getAddress());
         excistingPatient.setAge(updatedPatient.getAge());
         excistingPatient.setGender(updatedPatient.getGender());
-        excistingPatient.setContactInfo(updatedPatient.getContactInfo());
+        excistingPatient.setEmail(updatedPatient.getEmail());
+        excistingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
+        //excistingPatient.setContactInfo(updatedPatient.getContactInfo());
 
         return patientRepository.save(excistingPatient);
     }
 
+    public void softDeletePatient(Long id) {
+        Patient existingPatient = patientRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found or already Inactive"));
+        existingPatient.setActive(false);
+        patientRepository.save(existingPatient);
+    }
+
     public void deletePatient(Long id) {
         Patient excistingPatient = patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         patientRepository.delete(excistingPatient);
     }

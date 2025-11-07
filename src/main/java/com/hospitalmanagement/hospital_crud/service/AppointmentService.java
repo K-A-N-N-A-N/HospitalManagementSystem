@@ -1,55 +1,47 @@
 package com.hospitalmanagement.hospital_crud.service;
 
 import com.hospitalmanagement.hospital_crud.dto.AppointmentRequest;
-import com.hospitalmanagement.hospital_crud.entity.Appointment;
-import com.hospitalmanagement.hospital_crud.entity.Doctor;
-import com.hospitalmanagement.hospital_crud.entity.DoctorSlot;
-import com.hospitalmanagement.hospital_crud.entity.Patient;
+import com.hospitalmanagement.hospital_crud.entity.*;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
 import com.hospitalmanagement.hospital_crud.repository.AppointmentRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorSlotRepository;
 import com.hospitalmanagement.hospital_crud.repository.PatientRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.hospitalmanagement.hospital_crud.entity.AppointmentStatus.SCHEDULED;
+import static com.hospitalmanagement.hospital_crud.entity.AppointmentStatus.*;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class AppointmentService {
 
-    @Autowired
     private AppointmentRepository appointmentRepository;
-    @Autowired
     private DoctorRepository doctorRepository;
-    @Autowired
     private PatientRepository patientRepository;
-    @Autowired
     private DoctorSlotRepository slotRepository;
 
     public AppointmentService(
             AppointmentRepository appointmentRepository,
             DoctorRepository doctorRepository,
-            PatientRepository patientRepository) {
+            PatientRepository patientRepository,
+            DoctorSlotRepository slotRepository) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.slotRepository = slotRepository;
     }
 
     public Appointment createAppointment(AppointmentRequest request) {
         Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found"));
 
         Patient patient = patientRepository.findById(request.getPatientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         LocalDate date = request.getAppointmentTime().toLocalDate();
         LocalTime time = request.getAppointmentTime().toLocalTime();
@@ -68,7 +60,7 @@ public class AppointmentService {
         appointment.setSlot(slot);
         appointment.setAppointmentTime(request.getAppointmentTime());
         appointment.setReason(request.getReason());
-        appointment.setStatus(SCHEDULED);
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
 
         slot.setAvailable(false);
         slotRepository.save(slot);
@@ -78,19 +70,19 @@ public class AppointmentService {
 
     public Appointment updateAppointment(Long id, AppointmentRequest request) {
         Appointment existingAppointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
         // Update doctor if doctorId provided
         if (request.getDoctorId() != null) {
             Doctor doctor = doctorRepository.findById(request.getDoctorId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + request.getDoctorId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor not found" ));
             existingAppointment.setDoctor(doctor);
         }
 
         // Update patient if patientId provided
         if (request.getPatientId() != null) {
             Patient patient = patientRepository.findById(request.getPatientId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + request.getPatientId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
             existingAppointment.setPatient(patient);
         }
 
@@ -111,9 +103,33 @@ public class AppointmentService {
         return appointmentRepository.findAll();
     }
 
+    public List<Appointment> getAllActiveAppointments() {
+        List<AppointmentStatus> activeStatuses = List.of(SCHEDULED, COMPLETED);
+        return appointmentRepository.findByStatusIn(activeStatuses);
+    }
+
     public Appointment getAppointmentById(Long id) {
-        return appointmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
+        Appointment excistingAppointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (excistingAppointment.getStatus().equals(CANCELLED)) {
+            throw new RuntimeException("Appointment already cancelled");
+        }
+        return excistingAppointment;
+    }
+
+    public String cancelAppointment(Long id) {
+        Appointment excistingAppointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (excistingAppointment.getStatus().equals(CANCELLED)) {
+                return "Appointment Already cancelled";
+        }
+
+        excistingAppointment.setStatus(AppointmentStatus.CANCELLED);
+        appointmentRepository.save(excistingAppointment);
+
+        return "Appointment has been sucessfully Cancelled";
     }
 
     public void deleteAppointment(Long id) {

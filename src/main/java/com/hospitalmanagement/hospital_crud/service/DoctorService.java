@@ -16,13 +16,18 @@ public class DoctorService {
         this.doctorRepository = doctorRepository;
     }
 
-    public List<Doctor> getAllDoctors() {
-        return doctorRepository.findAll();
+    // Get all Active doctors
+    public List<Doctor> getAllActiveDoctors() {
+        return doctorRepository.findByActiveTrue();
     }
 
-    public Doctor getDoctorById(Long id) {
-        return doctorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+    // Get All Inactive doctors
+    public List<Doctor> getAllInactiveDoctors() { return doctorRepository.findByActiveFalse(); }
+
+    // Get Active Doctor by Id
+    public Doctor getActiveDoctorById(Long id) {
+        return doctorRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a differnt Doctor id"));
     }
 
     public Doctor createDoctor(Doctor doctor) {
@@ -31,19 +36,28 @@ public class DoctorService {
 
     public Doctor updateDoctor(Long id, Doctor updatedDoctor) {
         Doctor existingDoctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a differnt Doctor id"));
 
         existingDoctor.setName(updatedDoctor.getName());
         existingDoctor.setSpecialization(updatedDoctor.getSpecialization());
-        existingDoctor.setContactInfo(updatedDoctor.getContactInfo());
+        existingDoctor.setPhoneNumber(updatedDoctor.getPhoneNumber());
+        existingDoctor.setEmail(updatedDoctor.getEmail());
+        //existingDoctor.setContactInfo(updatedDoctor.getContactInfo());
         existingDoctor.setPhotoPath(updatedDoctor.getPhotoPath());
 
         return doctorRepository.save(existingDoctor);
     }
 
+    public void softDeleteDoctor(Long id) {
+        Doctor existingDoctor = doctorRepository.findByIdAndActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found or already Inactive"));
+        existingDoctor.setActive(false);
+        doctorRepository.save(existingDoctor);
+    }
+
     public void deleteDoctor(Long id) {
-        Doctor existingDoctor = doctorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
+        Doctor excistingDoctor = doctorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a differnt Doctor id"));
         doctorRepository.deleteById(id);
     }
 }

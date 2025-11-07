@@ -2,6 +2,7 @@ package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.entity.Doctor;
 import com.hospitalmanagement.hospital_crud.service.DoctorService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,29 +17,40 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    @GetMapping
+    @GetMapping("active")
     public List<Doctor> getAllDoctors() {
-        return doctorService.getAllDoctors();
+        return doctorService.getAllActiveDoctors();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("active/{id}")
     public Doctor getDoctorById(@PathVariable Long id) {
-        return doctorService.getDoctorById(id);
+        return doctorService.getActiveDoctorById(id);
     }
+
+    @GetMapping("inactive")
+    public List<Doctor> getDoctorByIdInactive() {return doctorService.getAllInactiveDoctors();}
 
     @PostMapping
-    public Doctor createDoctor(@RequestBody Doctor doctor) {
+    public Doctor createDoctor(@Valid @RequestBody Doctor doctor) {
         return doctorService.createDoctor(doctor);
     }
 
     @PutMapping("/{id}")
-    public Doctor updateDoctor(@PathVariable Long id, @RequestBody Doctor doctor) {
+    public Doctor updateDoctor(@PathVariable Long id,@Valid @RequestBody Doctor doctor) {
         return doctorService.updateDoctor(id, doctor);
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteDoctor(@PathVariable Long id) {
+    @DeleteMapping("delete/{id}")
+    public String softDeleteDoctor(@PathVariable Long id) {
+        doctorService.softDeleteDoctor(id);
+        return "Doctor status set to Inactive.";
+    }
+
+    /*
+    @DeleteMapping("delete{id}")
+    public String deleteDoctorById(@PathVariable Long id) {
         doctorService.deleteDoctor(id);
         return "Doctor deleted successfully.";
     }
+     */
 }

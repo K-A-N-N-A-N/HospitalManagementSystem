@@ -8,8 +8,7 @@ It ensures efficient coordination between doctors, patients, and administrative 
 
 ## ⚙️ Tech Stack
 - **Backend:** Spring Boot, Spring Data JPA, Maven
-- **Database:** MySQL / H2 (for testing)
-- **Frontend (planned):** React or Angular
+- **Database:** MySQL
 - **Tools:** Swagger (API Testing), Lombok (Boilerplate Reduction)
 - **Language:** Java 17
 

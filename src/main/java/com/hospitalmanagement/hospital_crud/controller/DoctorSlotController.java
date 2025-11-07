@@ -8,7 +8,9 @@ import com.hospitalmanagement.hospital_crud.service.DoctorSlotService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/doctor-slots")
@@ -22,36 +24,36 @@ public class DoctorSlotController {
 
     // Generate default slots for a doctor on a date
     @PostMapping("/generate")
-    public ResponseEntity<List<DoctorSlot>> generateDefaultSlots(@RequestBody SlotRequestDTO request) {
-        List<DoctorSlot> slots = slotService.generateDefaultSlots(request.getDoctorId(), request.getDate());
+    public ResponseEntity<List<DoctorSlot>> generateSlots(@RequestBody SlotRequestDTO request) {
+        List<DoctorSlot> slots = slotService.generateSlots(request.getDoctorId(), request.getDate(), request.getDurationMinutes());
         return ResponseEntity.ok(slots);
     }
 
     // Get all Scheduled Slots for a specific doctor
-    @PostMapping("/scheduledSlots")
-    public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestBody SlotRequestDTO request) {
+    @GetMapping("/scheduledSlots")
+    public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestParam Long doctorId, @RequestParam LocalDate date) {
         List<DoctorSlotResponse> slots = slotService
-                .getAllScheduledSlots(request.getDoctorId(), request.getDate())
+                .getAllScheduledSlots(doctorId, date)
                 .stream()
                 .map(DoctorSlotResponse::new)
-                .toList();
+                .collect(Collectors.toList());
         return ResponseEntity.ok(slots);
     }
 
     // Get available slots for a doctor on a specific date
-    @PostMapping("/available")
-    public ResponseEntity<List<DoctorSlotResponse>> getAvailableSlots(@RequestBody SlotRequestDTO request) {
+    @GetMapping("/available")
+    public ResponseEntity<List<DoctorSlotResponse>> getAvailableSlots(@RequestParam Long doctorId, @RequestParam LocalDate date) {
         List<DoctorSlotResponse> slots = slotService
-                .getAvailableSlots(request.getDoctorId(), request.getDate())
+                .getAvailableSlots(doctorId, date)
                 .stream()
                 .map(DoctorSlotResponse::new)
-                .toList();
+                .collect(Collectors.toList());
 
         return ResponseEntity.ok(slots);
     }
 
     //Update Slot Availability
-    @PostMapping("/updateSlot")
+    @PutMapping("/updateSlot")
     public ResponseEntity<String> updateSlot(@RequestBody UpdateSlotDTO request) {
         String message = slotService.updateSlotStatus(
                 request.getDoctorId(),

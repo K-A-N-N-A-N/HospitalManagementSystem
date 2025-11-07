@@ -1,0 +1,468 @@
+# ============================================================
+# Hospital Management System - API Test Data
+# ============================================================
+
+# ============================================================
+# Doctor API
+# ============================================================
+
+# Get All Doctors
+GET /doctors
+
+# Get Doctor by ID
+GET /doctors/1
+
+# Create Doctor
+POST /doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. John Smith",
+  "specialization": "Cardiology",
+  "contactInfo": "dr.john@example.com",
+  // Only if applicable
+  "photoPath": "/images/doctors/john-smith.jpg" 
+}
+
+# Update Doctor
+PUT /doctors/1
+Content-Type: application/json
+
+{
+  "name": "Dr. John Smith",
+  "specialization": "Cardiovascular Surgery",
+  "contactInfo": "dr.john.smith@example.com",
+  "photoPath": "/images/doctors/john-smith-updated.jpg"
+}
+
+# Delete Doctor
+DELETE /doctors/1
+
+# ============================================================
+# Patient API
+# ============================================================
+
+# Get All Patients
+GET /patients
+
+# Get Patient by ID
+GET /patients/1
+
+# Create Patient
+POST /patients
+Content-Type: application/json
+
+{
+  "name": "Alice Johnson",
+  "age": 35,
+  "gender": "Female",
+  "contactInfo": "alice.johnson@example.com",
+  "address": "123 Main Street, City, State 12345"
+}
+
+# Update Patient
+PUT /patients/1
+Content-Type: application/json
+
+{
+  "name": "Alice Johnson",
+  "age": 36,
+  "gender": "Female",
+  "contactInfo": "alice.johnson.new@example.com",
+  "address": "456 Oak Avenue, City, State 12345"
+}
+
+# Delete Patient
+DELETE /patients/1
+
+# ============================================================
+# Doctor Slot API
+# ============================================================
+
+# Generate Default Slots for a Doctor
+POST /api/doctor-slots/generate
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-15"
+}
+
+# Get Scheduled Slots for a Doctor
+POST /api/doctor-slots/scheduledSlots
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-15"
+}
+
+# Get Available Slots for a Doctor
+POST /api/doctor-slots/available
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-15"
+}
+
+# Update Slot Availability
+POST /api/doctor-slots/updateSlot
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-15",
+  "startTime": "09:00:00",
+  "available": false
+}
+
+# Delete Slots for a Date
+DELETE /api/doctor-slots/delete
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-15"
+}
+
+# ============================================================
+# Appointment API
+# ============================================================
+
+# Book Appointment
+POST /appointments/book
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "appointmentTime": "2025-11-15T10:00:00",
+  "reason": "Regular checkup and consultation"
+}
+
+# Update Appointment
+PUT /appointments/1
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "appointmentTime": "2025-11-15T11:00:00",
+  "reason": "Follow-up consultation after treatment"
+}
+
+# Get All Appointments
+GET /appointments
+
+# Get Appointment by ID
+GET /appointments/1
+
+# Get Appointment Summary
+GET /appointments/summary/1
+
+# Delete Appointment
+DELETE /appointments/1
+
+# ============================================================
+# Prescription API
+# ============================================================
+
+# Get All Prescriptions
+GET /prescriptions
+
+# Get Prescription by ID
+GET /prescriptions/1
+
+# Create Prescription
+POST /prescriptions
+Content-Type: application/json
+
+{
+  "appointment_id": 1,
+  "medicines": [
+    {
+      "medicineName": "Paracetamol",
+      "dosage": "500mg",
+      "notes": "Take twice daily after meals"
+    },
+    {
+      "medicineName": "Ibuprofen",
+      "dosage": "200mg",
+      "notes": "Take once daily in the morning"
+    },
+    {
+      "medicineName": "Antibiotic",
+      "dosage": "250mg",
+      "notes": "Take three times daily, complete the course"
+    }
+  ]
+}
+
+# Update Prescription
+PUT /prescriptions/1
+Content-Type: application/json
+
+{
+  "appointment_id": 1,
+  "medicines": [
+    {
+      "medicineName": "Paracetamol",
+      "dosage": "500mg",
+      "notes": "Take twice daily after meals - Updated"
+    },
+    {
+      "medicineName": "Vitamin D",
+      "dosage": "1000 IU",
+      "notes": "Take once daily in the morning"
+    }
+  ]
+}
+
+# Delete Prescription
+DELETE /prescriptions/1
+
+# ============================================================
+# Additional Test Scenarios
+# ============================================================
+
+# Create Multiple Doctors for Testing
+POST /doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Sarah Williams",
+  "specialization": "Pediatrics",
+  "contactInfo": "dr.sarah@example.com",
+  "photoPath": "/images/doctors/sarah-williams.jpg"
+}
+
+POST /doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Michael Brown",
+  "specialization": "Orthopedics",
+  "contactInfo": "dr.michael@example.com",
+  "photoPath": "/images/doctors/michael-brown.jpg"
+}
+
+POST /doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Emily Davis",
+  "specialization": "Dermatology",
+  "contactInfo": "dr.emily@example.com",
+  "photoPath": "/images/doctors/emily-davis.jpg"
+}
+
+# Create Multiple Patients for Testing
+POST /patients
+Content-Type: application/json
+
+{
+  "name": "Bob Wilson",
+  "age": 42,
+  "gender": "Male",
+  "contactInfo": "bob.wilson@example.com",
+  "address": "789 Elm Street, City, State 12345"
+}
+
+POST /patients
+Content-Type: application/json
+
+{
+  "name": "Carol Martinez",
+  "age": 28,
+  "gender": "Female",
+  "contactInfo": "carol.martinez@example.com",
+  "address": "321 Pine Road, City, State 12345"
+}
+
+POST /patients
+Content-Type: application/json
+
+{
+  "name": "David Lee",
+  "age": 55,
+  "gender": "Male",
+  "contactInfo": "david.lee@example.com",
+  "address": "654 Maple Drive, City, State 12345"
+}
+
+# Generate Slots for Multiple Days
+POST /api/doctor-slots/generate
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-16"
+}
+
+POST /api/doctor-slots/generate
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-17"
+}
+
+# Book Multiple Appointments
+POST /appointments/book
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "appointmentTime": "2025-11-15T09:00:00",
+  "reason": "Annual health checkup"
+}
+
+POST /appointments/book
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 2,
+  "appointmentTime": "2025-11-15T10:00:00",
+  "reason": "Chest pain evaluation"
+}
+
+POST /appointments/book
+Content-Type: application/json
+
+{
+  "doctorId": 2,
+  "patientId": 3,
+  "appointmentTime": "2025-11-16T14:00:00",
+  "reason": "Pediatric consultation"
+}
+
+# Create Prescriptions with Single Medicine
+POST /prescriptions
+Content-Type: application/json
+
+{
+  "appointment_id": 1,
+  "medicines": [
+    {
+      "medicineName": "Amoxicillin",
+      "dosage": "500mg",
+      "notes": "Take every 8 hours for 7 days"
+    }
+  ]
+}
+
+# Create Prescription with Multiple Medicines
+POST /prescriptions
+Content-Type: application/json
+
+{
+  "appointment_id": 2,
+  "medicines": [
+    {
+      "medicineName": "Metformin",
+      "dosage": "500mg",
+      "notes": "Take twice daily with meals"
+    },
+    {
+      "medicineName": "Aspirin",
+      "dosage": "81mg",
+      "notes": "Take once daily"
+    },
+    {
+      "medicineName": "Lisinopril",
+      "dosage": "10mg",
+      "notes": "Take once daily in the morning"
+    },
+    {
+      "medicineName": "Atorvastatin",
+      "dosage": "20mg",
+      "notes": "Take once daily at bedtime"
+    }
+  ]
+}
+
+# ============================================================
+# Test Workflow Example
+# ============================================================
+
+# Step 1: Create a Doctor
+POST /doctors
+Content-Type: application/json
+
+{
+  "name": "Dr. Robert Taylor",
+  "specialization": "General Medicine",
+  "contactInfo": "dr.robert@example.com",
+  "photoPath": "/images/doctors/robert-taylor.jpg"
+}
+
+# Step 2: Create a Patient
+POST /patients
+Content-Type: application/json
+
+{
+  "name": "Jane Doe",
+  "age": 30,
+  "gender": "Female",
+  "contactInfo": "jane.doe@example.com",
+  "address": "100 Test Street, Test City, TC 12345"
+}
+
+# Step 3: Generate Slots for the Doctor
+POST /api/doctor-slots/generate
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-20"
+}
+
+# Step 4: Check Available Slots
+POST /api/doctor-slots/available
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "date": "2025-11-20"
+}
+
+# Step 5: Book an Appointment
+POST /appointments/book
+Content-Type: application/json
+
+{
+  "doctorId": 1,
+  "patientId": 1,
+  "appointmentTime": "2025-11-20T10:00:00",
+  "reason": "General consultation"
+}
+
+# Step 6: Get Appointment Summary
+GET /appointments/summary/1
+
+# Step 7: Create Prescription for the Appointment
+POST /prescriptions
+Content-Type: application/json
+
+{
+  "appointment_id": 1,
+  "medicines": [
+    {
+      "medicineName": "Vitamin C",
+      "dosage": "1000mg",
+      "notes": "Take once daily"
+    },
+    {
+      "medicineName": "Zinc",
+      "dosage": "50mg",
+      "notes": "Take once daily"
+    }
+  ]
+}
+
+# Step 8: View Appointment Summary Again (should now include prescription)
+GET /appointments/summary/1
+

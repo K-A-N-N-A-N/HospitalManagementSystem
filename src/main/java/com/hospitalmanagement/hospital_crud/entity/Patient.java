@@ -1,6 +1,8 @@
 package com.hospitalmanagement.hospital_crud.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -23,8 +25,18 @@ public class Patient {
     private String name;
     private Integer age;
     private String gender;
-    private String contactInfo;
+
+    @Email(message = "Invalid email format. Must contain '@' and a valid domain.")
+    private String email;
+
+    @Pattern(
+            regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$",
+            message = "Invalid phone number. Must be 10 digits and may include country code like +91"
+    )
+    private String phoneNumber;
+
     private String address;
+    private Boolean active = true;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
