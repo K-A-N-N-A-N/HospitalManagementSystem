@@ -128,7 +128,6 @@
                         <version>8.0.33</version>
                     </dependency>
 
-                    <!-- 🧩 Add this Flyway MySQL module -->
                     <dependency>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-mysql</artifactId>
