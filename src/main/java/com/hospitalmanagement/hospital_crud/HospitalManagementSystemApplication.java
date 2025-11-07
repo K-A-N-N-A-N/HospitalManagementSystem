@@ -18,7 +18,7 @@ public class HospitalManagementSystemApplication {
 
     @Bean
     public AuditorAware<String> auditorProvider() {
-        return () -> Optional.of("system"); // or Optional.empty() if you prefer
+        return () -> Optional.of("system"); // or Optional.empty()
     }
 
 }
