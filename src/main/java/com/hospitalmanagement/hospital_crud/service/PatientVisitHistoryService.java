@@ -51,7 +51,7 @@ public class PatientVisitHistoryService {
         List<PatientVisitHistory> patientVisitHistory = patientVisitHistoryRepository.findByPatientId(patientId);
 
         if (patientVisitHistory.isEmpty()) {
-            throw new ResourceNotFoundException("No visit history found for patient ID: " + patientId);
+            throw new ResourceNotFoundException("No visit history found for patient");
         }
 
         return patientVisitHistory.stream()
