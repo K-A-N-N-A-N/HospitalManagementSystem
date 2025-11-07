@@ -47,7 +47,7 @@ The **Hospital Management System** is a Spring Boot application designed to mana
 - Automatically updates appointment status to `Completed` when a prescription is created.
 - Cascade delete ensures associated medicines are deleted when a prescription is removed.
 
-### Patient Visit History [Upcoming]
+### Patient Visit History
 - Displays a complete record of patient visits and treatments.
 - Aggregates data from appointments, doctors, and prescriptions.
 - Will serve as a long-term reference for patient medical history.
