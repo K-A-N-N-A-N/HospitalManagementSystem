@@ -26,7 +26,7 @@ public class AppointmentSummaryService {
         this.prescriptionRepository = prescriptionRepository;
     }
 
-    public Object getAppointmentSummary(Long appointmentId) {
+    public Object getAppointmentSummary(String appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 

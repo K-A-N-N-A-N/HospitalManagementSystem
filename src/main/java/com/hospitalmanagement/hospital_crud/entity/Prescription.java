@@ -17,10 +17,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Prescription {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "appointment_id", nullable = false)

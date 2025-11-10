@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<Doctor, Long> {
+public interface DoctorRepository extends JpaRepository<Doctor, String> {
 
-    Optional<Doctor> findByIdAndActiveTrue(Long doctorId);
+    Optional<Doctor> findByIdAndActiveTrue(String doctorId);
     List<Doctor> findByActiveFalse();
     List<Doctor> findByActiveTrue();
 

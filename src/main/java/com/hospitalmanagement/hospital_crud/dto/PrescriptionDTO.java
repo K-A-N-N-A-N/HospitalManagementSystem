@@ -6,8 +6,8 @@ import java.util.List;
 
 @Data
 public class PrescriptionDTO {
-    private Long id;
-    private Long appointment_id;
+    private String id;
+    private String appointment_id;
     private List<PrescriptionItemDTO> medicines;
     private Instant createdAt;
     private Instant updatedAt;

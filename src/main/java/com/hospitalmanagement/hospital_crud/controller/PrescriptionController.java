@@ -21,7 +21,7 @@ public class PrescriptionController {
     }
 
     @GetMapping("/{id}")
-    public PrescriptionDTO getPrescriptionById(@PathVariable long id) {
+    public PrescriptionDTO getPrescriptionById(@PathVariable String id) {
         return prescriptionService.getPrescriptionById(id);
     }
 
@@ -31,12 +31,12 @@ public class PrescriptionController {
     }
 
     @PutMapping("/{id}")
-    public PrescriptionDTO updatePrescription(@PathVariable long id, @RequestBody PrescriptionDTO prescription) {
+    public PrescriptionDTO updatePrescription(@PathVariable String id, @RequestBody PrescriptionDTO prescription) {
         return prescriptionService.updatePrescription(id, prescription);
     }
 
     @DeleteMapping("/{id}")
-    public String deletePrescription(@PathVariable long id) {
+    public String deletePrescription(@PathVariable String id) {
         prescriptionService.deletePrescription(id);
         return "Prescription deleted successfully";
     }

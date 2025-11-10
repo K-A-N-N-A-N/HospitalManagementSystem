@@ -27,7 +27,7 @@ public class PatientService {
     }
 
     // Get Active Patient by id
-    public Patient getActivePatientById(Long id) {
+    public Patient getActivePatientById(String id) {
         return patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
@@ -36,7 +36,7 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient getPatientById(Long id) {
+    public Patient getPatientById(String id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
@@ -45,7 +45,7 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    public Patient updatePatient(Long id, Patient updatedPatient) {
+    public Patient updatePatient(String id, Patient updatedPatient) {
         Patient excistingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
@@ -55,19 +55,18 @@ public class PatientService {
         excistingPatient.setGender(updatedPatient.getGender());
         excistingPatient.setEmail(updatedPatient.getEmail());
         excistingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
-        //excistingPatient.setContactInfo(updatedPatient.getContactInfo());
 
         return patientRepository.save(excistingPatient);
     }
 
-    public void softDeletePatient(Long id) {
+    public void softDeletePatient(String id) {
         Patient existingPatient = patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or already Inactive"));
         existingPatient.setActive(false);
         patientRepository.save(existingPatient);
     }
 
-    public void deletePatient(Long id) {
+    public void deletePatient(String id) {
         Patient excistingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 

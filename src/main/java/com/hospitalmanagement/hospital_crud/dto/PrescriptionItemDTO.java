@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrescriptionItemDTO {
-    private Long id;
+    private String id;
     private String medicineName;
     private String dosage;
     private String notes;

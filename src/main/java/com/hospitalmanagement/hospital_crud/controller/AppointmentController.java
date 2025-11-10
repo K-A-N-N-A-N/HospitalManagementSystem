@@ -34,7 +34,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public AppointmentResponse updateAppointment(@PathVariable Long id, @RequestBody AppointmentRequest request) {
+    public AppointmentResponse updateAppointment(@PathVariable String id, @RequestBody AppointmentRequest request) {
         Appointment appointment = appointmentService.updateAppointment(id, request);
         return new AppointmentResponse(appointment);
     }
@@ -56,26 +56,26 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    public AppointmentResponse getAppointment(@PathVariable Long id) {
+    public AppointmentResponse getAppointment(@PathVariable String id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
         return new AppointmentResponse(appointment);
     }
 
     @PutMapping("/cancel/{id}")
-    public ResponseEntity<String> cancelAppointment(@PathVariable Long id) {
+    public ResponseEntity<String> cancelAppointment(@PathVariable String id) {
         String msg = appointmentService.cancelAppointment(id);
         return ResponseEntity.ok(msg);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteAppointmentById(@PathVariable Long id) {
+    public String deleteAppointmentById(@PathVariable String id) {
         appointmentService.deleteAppointment(id);
         return "Appointment deleted successfully";
     }
 
     //Display Appointment Summary
     @GetMapping("/summary/{id}")
-    public ResponseEntity<?> getAppointmentSummary(@PathVariable Long id) {
+    public ResponseEntity<?> getAppointmentSummary(@PathVariable String id) {
         Object result = appointmentSummaryService.getAppointmentSummary(id);
         return ResponseEntity.ok(result);
     }

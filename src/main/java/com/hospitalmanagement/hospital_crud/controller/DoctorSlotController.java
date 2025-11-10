@@ -31,7 +31,7 @@ public class DoctorSlotController {
 
     // Get all Scheduled Slots for a specific doctor
     @GetMapping("/scheduledSlots")
-    public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestParam Long doctorId, @RequestParam LocalDate date) {
+    public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestParam String doctorId, @RequestParam LocalDate date) {
         List<DoctorSlotResponse> slots = slotService
                 .getAllScheduledSlots(doctorId, date)
                 .stream()
@@ -42,7 +42,7 @@ public class DoctorSlotController {
 
     // Get available slots for a doctor on a specific date
     @GetMapping("/available")
-    public ResponseEntity<List<DoctorSlotResponse>> getAvailableSlots(@RequestParam Long doctorId, @RequestParam LocalDate date) {
+    public ResponseEntity<List<DoctorSlotResponse>> getAvailableSlots(@RequestParam String doctorId, @RequestParam LocalDate date) {
         List<DoctorSlotResponse> slots = slotService
                 .getAvailableSlots(doctorId, date)
                 .stream()

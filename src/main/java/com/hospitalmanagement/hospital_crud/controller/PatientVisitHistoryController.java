@@ -22,7 +22,7 @@ public class PatientVisitHistoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<PatientVisitHistoryDTO>> getPatientVisitHistory(@PathVariable Long id) {
+    public ResponseEntity<List<PatientVisitHistoryDTO>> getPatientVisitHistory(@PathVariable String id) {
         List<PatientVisitHistoryDTO> histories = patientVisitHistoryService.getVisitHistoryByPatient(id);
         return ResponseEntity.ok(histories);
     }
