@@ -47,7 +47,7 @@ public class PatientVisitHistoryService {
         }
     }
 
-    public List<PatientVisitHistoryDTO> getVisitHistoryByPatient(Long patientId) {
+    public List<PatientVisitHistoryDTO> getVisitHistoryByPatient(String patientId) {
         List<PatientVisitHistory> patientVisitHistory = patientVisitHistoryRepository.findByPatientId(patientId);
 
         if (patientVisitHistory.isEmpty()) {

@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @Builder
 public class PatientVisitHistoryDTO {
 
-    private Long id;
-    private Long patientId;
+    private String id;
+    private String patientId;
     private String patientName;
     private LocalDateTime visitDate;
     private AppointmentSummaryDTO appointmentSummary;

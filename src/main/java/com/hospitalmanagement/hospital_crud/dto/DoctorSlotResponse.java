@@ -4,7 +4,6 @@ import com.hospitalmanagement.hospital_crud.entity.DoctorSlot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -12,8 +11,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorSlotResponse {
-    private Long id;
-    private Long doctorId;
+    private String id;
+    private String doctorId;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;

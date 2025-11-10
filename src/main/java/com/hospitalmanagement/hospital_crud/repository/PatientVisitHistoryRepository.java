@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PatientVisitHistoryRepository extends JpaRepository<PatientVisitHistory, Long> {
-    List<PatientVisitHistory> findByPatientId(Long patientId);
+public interface PatientVisitHistoryRepository extends JpaRepository<PatientVisitHistory, String> {
+    List<PatientVisitHistory> findByPatientId(String patientId);
 }

@@ -19,15 +19,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class PatientVisitHistory {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
+    private String id;
 
-    private Long patientId;
+    private String patientId;
     private String patientName;
 
-    private Long appointmentId;
+    private String appointmentId;
     private LocalDateTime visitDate;
 
     @Lob

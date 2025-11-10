@@ -6,7 +6,6 @@ import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DoctorService {
@@ -26,7 +25,7 @@ public class DoctorService {
     public List<Doctor> getAllInactiveDoctors() { return doctorRepository.findByActiveFalse(); }
 
     // Get Active Doctor by id
-    public Doctor getActiveDoctorById(UUID id) {
+    public Doctor getActiveDoctorById(String id) {
         return doctorRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a different Doctor id"));
     }
@@ -35,7 +34,7 @@ public class DoctorService {
         return doctorRepository.save(doctor);
     }
 
-    public Doctor updateDoctor(UUID id, Doctor updatedDoctor) {
+    public Doctor updateDoctor(String id, Doctor updatedDoctor) {
         Doctor existingDoctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a different Doctor id"));
 
@@ -48,7 +47,7 @@ public class DoctorService {
         return doctorRepository.save(existingDoctor);
     }
 
-    public void softDeleteDoctor(UUID id) {
+    public void softDeleteDoctor(String id) {
         Doctor existingDoctor = doctorRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found or already Inactive"));
         existingDoctor.setActive(false);
@@ -56,7 +55,7 @@ public class DoctorService {
     }
 
     /*
-    public void deleteDoctor(UUID id) {
+    public void deleteDoctor(String id) {
         Doctor existingDoctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a different Doctor id"));
         doctorRepository.deleteById(id);

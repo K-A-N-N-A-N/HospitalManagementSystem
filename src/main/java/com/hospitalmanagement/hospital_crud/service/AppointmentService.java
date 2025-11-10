@@ -46,7 +46,7 @@ public class AppointmentService {
         LocalDate date = request.getAppointmentTime().toLocalDate();
         LocalTime time = request.getAppointmentTime().toLocalTime();
 
-        // Find Avilable Slots for that specific doctor
+        // Find Available Slots for that specific doctor
         DoctorSlot slot = slotRepository.findAvailableSlotForDoctorAtTime(request.getDoctorId(), date, time)
                 .orElseThrow(() -> new RuntimeException("No available slot found for this time"));
 
@@ -68,7 +68,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public Appointment updateAppointment(Long id, AppointmentRequest request) {
+    public Appointment updateAppointment(String id, AppointmentRequest request) {
         Appointment existingAppointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
@@ -108,7 +108,7 @@ public class AppointmentService {
         return appointmentRepository.findByStatusIn(activeStatuses);
     }
 
-    public Appointment getAppointmentById(Long id) {
+    public Appointment getAppointmentById(String id) {
         Appointment excistingAppointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
@@ -118,7 +118,7 @@ public class AppointmentService {
         return excistingAppointment;
     }
 
-    public String cancelAppointment(Long id) {
+    public String cancelAppointment(String id) {
         Appointment excistingAppointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
 
@@ -129,10 +129,10 @@ public class AppointmentService {
         excistingAppointment.setStatus(AppointmentStatus.CANCELLED);
         appointmentRepository.save(excistingAppointment);
 
-        return "Appointment has been sucessfully Cancelled";
+        return "Appointment has been successfully Cancelled";
     }
 
-    public void deleteAppointment(Long id) {
+    public void deleteAppointment(String id) {
         Appointment excistingAppointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + id));
 

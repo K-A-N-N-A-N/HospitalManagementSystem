@@ -4,16 +4,15 @@ import com.hospitalmanagement.hospital_crud.entity.Appointment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppointmentResponse {
-    private Long id;
-    private Long doctorId;
-    private Long patientId;
+    private String id;
+    private String doctorId;
+    private String patientId;
     private LocalDateTime appointmentTime;
     private String reason;
     private String status;

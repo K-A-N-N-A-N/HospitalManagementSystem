@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/patients")
@@ -24,7 +23,7 @@ public class PatientController {
     }
 
     @GetMapping("active/{id}")
-    public Patient getPatientById(@PathVariable UUID id) {
+    public Patient getPatientById(@PathVariable String id) {
         return patientService.getActivePatientById(id);
     }
 
@@ -39,18 +38,18 @@ public class PatientController {
     }
 
     @PutMapping("/{id}")
-    public Patient updatePatient(@PathVariable UUID id,@Valid @RequestBody Patient patient) {
+    public Patient updatePatient(@PathVariable String id, @Valid @RequestBody Patient patient) {
         return patientService.updatePatient(id, patient);
     }
 
     @DeleteMapping("delete/{id}")
-    public String softDeletePatient(@PathVariable UUID id) {
+    public String softDeletePatient(@PathVariable String id) {
         patientService.softDeletePatient(id);
         return "Patient status set to Inactive.";
     }
 /*
     @DeleteMapping("delete/{id}")
-    public String deletePatientById(@PathVariable Long id) {
+    public String deletePatientById(@PathVariable String id) {
         patientService.deletePatient(id);
         return "Patient deleted successfully.";
     }

@@ -11,7 +11,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -20,9 +19,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Patient {
     @Id
-    @GeneratedValue
-    @Column(updatable = false, nullable = false, unique = true)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
+    private String id;
 
     private String name;
     private Integer age;

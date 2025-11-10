@@ -15,10 +15,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class DoctorSlot {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(updatable = false, nullable = false)
+    private String id;
 
     // Link to Doctor
     @ManyToOne(fetch = FetchType.LAZY)

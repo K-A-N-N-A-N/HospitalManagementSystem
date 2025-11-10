@@ -43,7 +43,7 @@ public class PrescriptionService {
                 .collect(Collectors.toList());
     }
 
-    public PrescriptionDTO getPrescriptionById(Long id) {
+    public PrescriptionDTO getPrescriptionById(String id) {
         Prescription prescription = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
         return PrescriptionMapper.toDTO(prescription);
@@ -79,7 +79,7 @@ public class PrescriptionService {
         return PrescriptionMapper.toDTO(saved);
     }
 
-    public PrescriptionDTO updatePrescription(Long id, PrescriptionDTO updatedDto) {
+    public PrescriptionDTO updatePrescription(String id, PrescriptionDTO updatedDto) {
         Prescription existing = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
 
@@ -106,7 +106,7 @@ public class PrescriptionService {
         return PrescriptionMapper.toDTO(updated);
     }
 
-    public void deletePrescription(Long id) {
+    public void deletePrescription(String id) {
         Prescription existing = prescriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
         prescriptionRepository.delete(existing);

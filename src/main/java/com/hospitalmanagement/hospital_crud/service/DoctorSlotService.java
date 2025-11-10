@@ -23,7 +23,7 @@ public class DoctorSlotService {
     }
 
     // Generate slots with customizable duration
-    public List<DoctorSlot> generateSlots(Long docId, LocalDate date, int slotDurationMinutes) {
+    public List<DoctorSlot> generateSlots(String docId, LocalDate date, int slotDurationMinutes) {
         Doctor doctor = docRepo.findById(docId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -56,7 +56,7 @@ public class DoctorSlotService {
     }
 
     //get All appointment slots for a given doctor
-    public List<DoctorSlot> getAllScheduledSlots(Long docId, LocalDate date) {
+    public List<DoctorSlot> getAllScheduledSlots(String docId, LocalDate date) {
         Doctor doctor = docRepo.findById(docId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -68,7 +68,7 @@ public class DoctorSlotService {
     }
 
     //get Available Slots for a given doctor (id)
-    public List<DoctorSlot> getAvailableSlots(Long doctorId, LocalDate date) {
+    public List<DoctorSlot> getAvailableSlots(String doctorId, LocalDate date) {
         Doctor doctor = docRepo.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -79,8 +79,8 @@ public class DoctorSlotService {
                 .collect(Collectors.toList());
     }
 
-    // Update the slot to no avialable by the doctor
-    public String updateSlotStatus(Long doctorId, LocalDate date, LocalTime startTime, boolean available) {
+    // Update the slot to no available by the doctor
+    public String updateSlotStatus(String doctorId, LocalDate date, LocalTime startTime, boolean available) {
         Doctor doctor = docRepo.findById(doctorId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -97,7 +97,7 @@ public class DoctorSlotService {
 
 
     // Delete all slots for a doctor on a given date
-    public String deleteSlotsForDate(Long docId, LocalDate date) {
+    public String deleteSlotsForDate(String docId, LocalDate date) {
         Doctor doctor = docRepo.findById(docId)
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
