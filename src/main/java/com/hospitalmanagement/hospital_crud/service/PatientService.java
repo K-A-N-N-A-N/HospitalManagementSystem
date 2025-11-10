@@ -6,6 +6,7 @@ import com.hospitalmanagement.hospital_crud.repository.PatientRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PatientService {
@@ -27,7 +28,7 @@ public class PatientService {
     }
 
     // Get Active Patient by id
-    public Patient getActivePatientById(Long id) {
+    public Patient getActivePatientById(UUID id) {
         return patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
@@ -36,7 +37,7 @@ public class PatientService {
         return patientRepository.findAll();
     }
 
-    public Patient getPatientById(Long id) {
+    public Patient getPatientById(UUID id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
     }
@@ -45,7 +46,7 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    public Patient updatePatient(Long id, Patient updatedPatient) {
+    public Patient updatePatient(UUID id, Patient updatedPatient) {
         Patient excistingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
@@ -55,19 +56,18 @@ public class PatientService {
         excistingPatient.setGender(updatedPatient.getGender());
         excistingPatient.setEmail(updatedPatient.getEmail());
         excistingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
-        //excistingPatient.setContactInfo(updatedPatient.getContactInfo());
 
         return patientRepository.save(excistingPatient);
     }
 
-    public void softDeletePatient(Long id) {
+    public void softDeletePatient(UUID id) {
         Patient existingPatient = patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or already Inactive"));
         existingPatient.setActive(false);
         patientRepository.save(existingPatient);
     }
 
-    public void deletePatient(Long id) {
+    public void deletePatient(UUID id) {
         Patient excistingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 

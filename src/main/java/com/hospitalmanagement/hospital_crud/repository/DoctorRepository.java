@@ -6,11 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<Doctor, Long> {
+public interface DoctorRepository extends JpaRepository<Doctor, UUID> {
 
-    Optional<Doctor> findByIdAndActiveTrue(Long doctorId);
+    Optional<Doctor> findByIdAndActiveTrue(UUID doctorId);
     List<Doctor> findByActiveFalse();
     List<Doctor> findByActiveTrue();
 
