@@ -19,8 +19,18 @@ public class AuditLog {
     @Column(updatable = false, nullable = false)
     private String id;
 
+    @Column(name = "entity_name")
+    private String entityName;
+    @Column(name = "entity_id")
+    private String entityId;
+
     private String action;
+    @Column(name = "performed_by")
     private String performedBy;
+    private String role;
+
+    @Column(columnDefinition = "TEXT")
+    private String changes;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
