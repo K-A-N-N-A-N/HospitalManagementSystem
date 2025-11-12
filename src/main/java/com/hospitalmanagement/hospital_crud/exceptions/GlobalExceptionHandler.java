@@ -40,6 +40,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Invalid data: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    // Handle universal system/integration failures
+    @ExceptionHandler(SystemOperationException.class)
+    public ResponseEntity<String> handleSystemOperationException(SystemOperationException ex) {
+        return new ResponseEntity<>("System operation failed: " + ex.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
     // Handle any unexpected errors
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
