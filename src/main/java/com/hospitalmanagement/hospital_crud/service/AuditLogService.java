@@ -9,8 +9,10 @@ import com.hospitalmanagement.hospital_crud.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -24,15 +26,8 @@ public class AuditLogService {
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void save(AuditLog auditLog) {
-
-        if (auditLog.getId() == null) {
-            auditLog.setId(UUID.randomUUID().toString());
-        }
-
-        if (auditLog.getCreatedAt() == null) {
-            auditLog.setCreatedAt(LocalDateTime.now());
-        }
 
         try {
             auditLogRepository.save(auditLog);
