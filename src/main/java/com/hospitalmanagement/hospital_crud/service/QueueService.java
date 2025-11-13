@@ -16,7 +16,7 @@ public class QueueService {
     public void sendToQueue(String queueName, Object message) {
         try {
             jmsTemplate.convertAndSend(queueName, message);
-            System.out.println("📤 Sent to queue [" + queueName + "]: " + message);
+            System.out.println("Sent to queue [" + queueName + "]: " + message);
         } catch (Exception e) {
             throw new SystemOperationException("Failed to send message to " + queueName, e);
         }

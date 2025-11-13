@@ -3,6 +3,8 @@ package com.hospitalmanagement.hospital_crud.service;
 import com.hospitalmanagement.hospital_crud.entity.Patient;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
 import com.hospitalmanagement.hospital_crud.repository.PatientRepository;
+import com.hospitalmanagement.hospital_crud.service.QueueService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,11 @@ import java.util.List;
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final QueueService queueService;
 
-    public PatientService(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository, QueueService queueService) {
         this.patientRepository = patientRepository;
+        this.queueService = queueService;
     }
 
     // Get all Active patients
@@ -42,7 +46,8 @@ public class PatientService {
     }
 
     public  Patient createPatient(Patient patient) {
-        return patientRepository.save(patient);
+        queueService.sendToQueue("patient.queue", patient);
+        return patient;
     }
 
     public Patient updatePatient(String id, Patient updatedPatient) {
@@ -56,20 +61,23 @@ public class PatientService {
         excistingPatient.setEmail(updatedPatient.getEmail());
         excistingPatient.setPhoneNumber(updatedPatient.getPhoneNumber());
 
-        return patientRepository.save(excistingPatient);
+        queueService.sendToQueue("patient.update.queue", excistingPatient);
+        return excistingPatient;
     }
 
     public void softDeletePatient(String id) {
         Patient existingPatient = patientRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found or already Inactive"));
         existingPatient.setActive(false);
-        patientRepository.save(existingPatient);
+        queueService.sendToQueue("patient.delete.queue", existingPatient);
     }
 
+    /*
     public void deletePatient(String id) {
         Patient excistingPatient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found"));
 
         patientRepository.delete(excistingPatient);
     }
+     */
 }
