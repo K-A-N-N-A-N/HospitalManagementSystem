@@ -1,6 +1,7 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.entity.AuditLog;
+import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
 import com.hospitalmanagement.hospital_crud.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,7 @@ public class AuditLogController {
     @GetMapping("/{id}")
     public AuditLog getAuditLogById(@PathVariable String id) {
         return auditLogRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Audit log not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Audit log not found"));
     }
 
     //Optional: Filter by entity name (e.g., Doctor, Patient)

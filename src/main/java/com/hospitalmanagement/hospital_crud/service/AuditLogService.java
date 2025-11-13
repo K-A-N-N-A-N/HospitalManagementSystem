@@ -4,16 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hospitalmanagement.hospital_crud.entity.AuditLog;
-import com.hospitalmanagement.hospital_crud.exceptions.AuditSaveException;
+import com.hospitalmanagement.hospital_crud.exceptions.SystemOperationException;
 import com.hospitalmanagement.hospital_crud.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +33,7 @@ public class AuditLogService {
                     auditLog.getEntityName(),
                     auditLog.getEntityId());
         } catch (Exception ex) {
-            throw new AuditSaveException(
+            throw new SystemOperationException(
                     "Failed to save audit record for entity: " + auditLog.getEntityName(), ex);
         }
     }
@@ -45,7 +42,7 @@ public class AuditLogService {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception ex) {
-            throw new AuditSaveException(
+            throw new SystemOperationException(
                     "Failed to serialize audit data for: " + obj.getClass().getSimpleName(), ex);
         }
     }
