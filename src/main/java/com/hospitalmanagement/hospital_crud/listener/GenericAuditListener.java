@@ -2,6 +2,8 @@ package com.hospitalmanagement.hospital_crud.listener;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hospitalmanagement.hospital_crud.config.SpringContext;
 import com.hospitalmanagement.hospital_crud.entity.AuditLog;
 import com.hospitalmanagement.hospital_crud.service.AuditLogService;
@@ -82,11 +84,18 @@ public class GenericAuditListener {
             String idValue = getEntityId(entity);
             if (idValue == null) return null;
 
-            EntityManager em = SpringContext.getBean(EntityManager.class);
-            Class<?> clazz = entity.getClass();
+            // Create an entity manager inorder to fetch the "old" version
+            EntityManager em = SpringContext.getBean(EntityManager.class)
+                    .getEntityManagerFactory()
+                    .createEntityManager();
 
+            Class<?> clazz = entity.getClass();
             Object id = convertId(idValue, clazz);
-            return em.find(clazz, id);
+
+            Object oldState = em.find(clazz, id);
+            em.close();
+            return oldState;
+
         } catch (Exception ex) {
             log.warn("Could not load old state for auditing: {}", ex.getMessage());
             return null;
@@ -111,13 +120,19 @@ public class GenericAuditListener {
 
     private Map<String, Object> toMap(Object obj) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            // Use the same configured ObjectMapper from AuditLogService
+            AuditLogService auditService = SpringContext.getBean(AuditLogService.class);
+            ObjectMapper mapper = new ObjectMapper()
+                    .registerModule(new JavaTimeModule())
+                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
             return mapper.convertValue(obj, new TypeReference<>() {});
         } catch (Exception ex) {
-            log.error("Failed to convert object to map for auditing: {}", ex.getMessage());
+            log.error("Failed to convert object to map for auditing: {}", ex.getMessage(), ex);
             return Collections.emptyMap();
         }
     }
+
 
     private Map<String, Object> computeDiff(Map<String, Object> before, Map<String, Object> after) {
         Map<String, Object> diff = new HashMap<>();
