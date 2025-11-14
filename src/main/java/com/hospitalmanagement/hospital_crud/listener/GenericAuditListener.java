@@ -120,16 +120,47 @@ public class GenericAuditListener {
 
     private Map<String, Object> toMap(Object obj) {
         try {
-            // Use the same configured ObjectMapper from AuditLogService
-            AuditLogService auditService = SpringContext.getBean(AuditLogService.class);
+            // Unproxy first
+            Object unproxied = org.hibernate.Hibernate.unproxy(obj);
+
+            // Remove all @ManyToOne / @OneToMany / @OneToOne / @ManyToMany lazy fields
+            Object sanitized = sanitizeEntity(unproxied);
+
             ObjectMapper mapper = new ObjectMapper()
                     .registerModule(new JavaTimeModule())
                     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-            return mapper.convertValue(obj, new TypeReference<>() {});
+            return mapper.convertValue(sanitized, new TypeReference<>() {});
         } catch (Exception ex) {
-            log.error("Failed to convert object to map for auditing: {}", ex.getMessage(), ex);
+            log.error("Failed to convert object to map for auditing: {}", ex.getMessage());
             return Collections.emptyMap();
+        }
+    }
+
+    private Object sanitizeEntity(Object entity) {
+        try {
+            Class<?> clazz = entity.getClass();
+            Object copy = clazz.getDeclaredConstructor().newInstance();
+
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+
+                // Skip lazy relationships
+                if (field.isAnnotationPresent(jakarta.persistence.ManyToOne.class) ||
+                        field.isAnnotationPresent(jakarta.persistence.OneToOne.class) ||
+                        field.isAnnotationPresent(jakarta.persistence.OneToMany.class) ||
+                        field.isAnnotationPresent(jakarta.persistence.ManyToMany.class)) {
+                    continue; // DO NOT touch relations
+                }
+
+                // Copy simple fields
+                field.set(copy, field.get(entity));
+            }
+
+            return copy;
+
+        } catch (Exception e) {
+            return entity; // fallback
         }
     }
 
@@ -143,12 +174,17 @@ public class GenericAuditListener {
         for (String key : keys) {
             Object oldVal = before.get(key);
             Object newVal = after.get(key);
+
             if (!Objects.equals(oldVal, newVal)) {
-                diff.put(key, Map.of("before", oldVal, "after", newVal));
+                Map<String, Object> changeMap = new HashMap<>();
+                changeMap.put("before", oldVal);
+                changeMap.put("after", newVal);
+                diff.put(key, changeMap);
             }
         }
         return diff;
     }
+
 
     private String getEntityId(Object entity) {
         try {

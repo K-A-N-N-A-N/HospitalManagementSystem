@@ -1,5 +1,6 @@
 package com.hospitalmanagement.hospital_crud.service;
 
+import com.hospitalmanagement.hospital_crud.dto.AppointmentMessageDTO;
 import com.hospitalmanagement.hospital_crud.dto.AppointmentRequest;
 import com.hospitalmanagement.hospital_crud.entity.*;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorSlotRepository;
 import com.hospitalmanagement.hospital_crud.repository.PatientRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import static com.hospitalmanagement.hospital_crud.entity.AppointmentStatus.*;
 
+@Slf4j
 @Service
 @Transactional
 public class AppointmentService {
@@ -24,16 +27,19 @@ public class AppointmentService {
     private DoctorRepository doctorRepository;
     private PatientRepository patientRepository;
     private DoctorSlotRepository slotRepository;
+    private QueueService queueService;
 
     public AppointmentService(
             AppointmentRepository appointmentRepository,
             DoctorRepository doctorRepository,
             PatientRepository patientRepository,
-            DoctorSlotRepository slotRepository) {
+            DoctorSlotRepository slotRepository,
+            QueueService queueService) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.slotRepository = slotRepository;
+        this.queueService = queueService;
     }
 
     public Appointment createAppointment(AppointmentRequest request) {
@@ -54,18 +60,36 @@ public class AppointmentService {
             throw new RuntimeException("Slot not available");
         }
 
-        Appointment appointment = new Appointment();
-        appointment.setDoctor(doctor);
-        appointment.setPatient(patient);
-        appointment.setSlot(slot);
-        appointment.setAppointmentTime(request.getAppointmentTime());
-        appointment.setReason(request.getReason());
-        appointment.setStatus(AppointmentStatus.SCHEDULED);
-
         slot.setAvailable(false);
         slotRepository.save(slot);
 
-        return appointmentRepository.save(appointment);
+        //Send Appoint via DTO to queue
+        AppointmentMessageDTO msg = new AppointmentMessageDTO();
+        msg.setDoctorId(doctor.getId());
+        msg.setPatientId(patient.getId());
+        msg.setSlotId(slot.getId());
+        msg.setAppointmentTime(request.getAppointmentTime());
+        msg.setReason(request.getReason());
+
+        try {
+            queueService.sendToQueue("appointment.queue", msg);
+            log.info("Appointment queued for doctor: {} and patient: {}", doctor.getName(), patient.getName());
+        } catch (Exception e) {
+            // revert slot availability if queue send fails (avoid stealing slot)
+            slot.setAvailable(true);
+            slotRepository.save(slot);
+            throw new RuntimeException("Failed to queue appointment: " + e.getMessage(), e);
+        }
+
+        // return a minimal Appointment-like response to the client so the API doesn't return null
+        Appointment ack = new Appointment();
+        ack.setDoctor(doctor);
+        ack.setPatient(patient);
+        ack.setSlot(slot);
+        ack.setAppointmentTime(request.getAppointmentTime());
+        ack.setReason(request.getReason());
+        ack.setStatus(AppointmentStatus.SCHEDULED);
+        return ack;
     }
 
     public Appointment updateAppointment(String id, AppointmentRequest request) {
