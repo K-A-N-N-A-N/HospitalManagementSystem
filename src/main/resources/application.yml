@@ -1,0 +1,19 @@
+spring:
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    packages:
+      trust-all: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: YourMailid
+    password: YourPassword
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

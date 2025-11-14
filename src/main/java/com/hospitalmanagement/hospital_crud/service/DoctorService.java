@@ -2,8 +2,11 @@ package com.hospitalmanagement.hospital_crud.service;
 
 import com.hospitalmanagement.hospital_crud.entity.Doctor;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
+import com.hospitalmanagement.hospital_crud.exceptions.SystemOperationException;
 import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.jms.core.JmsTemplate;
+import com.hospitalmanagement.hospital_crud.service.QueueService;
 
 import java.util.List;
 
@@ -11,9 +14,13 @@ import java.util.List;
 public class DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final JmsTemplate jmsTemplate;
+    private final QueueService queueService;
 
-    public DoctorService(DoctorRepository doctorRepository) {
+    public DoctorService(DoctorRepository doctorRepository, JmsTemplate jmsTemplate, QueueService queueService) {
         this.doctorRepository = doctorRepository;
+        this.jmsTemplate = jmsTemplate;
+        this.queueService = queueService;
     }
 
     // Get all Active doctors
@@ -30,8 +37,10 @@ public class DoctorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found, Try a different Doctor id"));
     }
 
+    // Create doctor via ActiveMQ queue
     public Doctor createDoctor(Doctor doctor) {
-        return doctorRepository.save(doctor);
+        queueService.sendToQueue("doctor.queue", doctor);
+        return doctor;
     }
 
     public Doctor updateDoctor(String id, Doctor updatedDoctor) {
@@ -44,14 +53,15 @@ public class DoctorService {
         existingDoctor.setEmail(updatedDoctor.getEmail());
         existingDoctor.setPhotoPath(updatedDoctor.getPhotoPath());
 
-        return doctorRepository.save(existingDoctor);
+        queueService.sendToQueue("doctor.update.queue", existingDoctor);
+        return existingDoctor;
     }
 
     public void softDeleteDoctor(String id) {
         Doctor existingDoctor = doctorRepository.findByIdAndActiveTrue(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found or already Inactive"));
         existingDoctor.setActive(false);
-        doctorRepository.save(existingDoctor);
+        queueService.sendToQueue("doctor.delete.queue", existingDoctor);
     }
 
     /*
