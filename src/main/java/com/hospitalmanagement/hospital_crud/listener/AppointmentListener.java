@@ -6,6 +6,7 @@ import com.hospitalmanagement.hospital_crud.repository.AppointmentRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorRepository;
 import com.hospitalmanagement.hospital_crud.repository.DoctorSlotRepository;
 import com.hospitalmanagement.hospital_crud.repository.PatientRepository;
+import com.hospitalmanagement.hospital_crud.service.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
@@ -19,16 +20,19 @@ public class AppointmentListener {
     private final DoctorSlotRepository slotRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
+    private final EmailService emailService;
 
     public AppointmentListener(
             AppointmentRepository appointmentRepository,
             DoctorSlotRepository slotRepository,
             DoctorRepository doctorRepository,
-            PatientRepository patientRepository) {
+            PatientRepository patientRepository,
+            EmailService emailService) {
         this.appointmentRepository = appointmentRepository;
         this.slotRepository = slotRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -54,6 +58,13 @@ public class AppointmentListener {
             appointment.setStatus(AppointmentStatus.SCHEDULED);
 
             appointmentRepository.save(appointment);
+
+            emailService.sendAppointmentNotification(
+                    doctor.getEmail(),
+                    doctor.getName(),
+                    patient.getName(),
+                    msg.getAppointmentTime().toString()
+            );
 
             log.info("Appointment created via queue for doctor {}", doctor.getName());
 

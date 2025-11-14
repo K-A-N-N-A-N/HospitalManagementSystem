@@ -19,15 +19,15 @@ public class EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(doctorEmail);
-            message.setSubject("New Appointment Scheduled");
+            message.setSubject("[EMAIL] New Appointment Scheduled");
             message.setText(String.format(
                     "Hello Dr. %s,\n\nA new appointment has been booked with patient %s.\nAppointment Time: %s\n\nBest regards,\nHospital Management System",
                     doctorName, patientName, appointmentTime
             ));
             mailSender.send(message);
-            log.info("Email sent successfully to {}", doctorEmail);
+            log.info("[EMAIL] Email sent successfully to {}", doctorEmail);
         } catch (Exception e) {
-            log.error("Failed to send email to {}: {}", doctorEmail, e.getMessage());
+            log.error("[EMAIL] Failed to send email to {}: {}", doctorEmail, e.getMessage());
         }
     }
 }
