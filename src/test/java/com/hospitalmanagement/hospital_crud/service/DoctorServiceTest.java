@@ -101,4 +101,94 @@ class DoctorServiceTest {
 
         verify(doctorRepository, times(1)).findByIdAndActiveTrue("D1");
     }
+
+    @Test
+    @DisplayName("Should send doctor to ActiveMQ queue and return the doctor on create")
+    void createDoctor_shouldSendToQueueAndReturnDoctor() {
+        Doctor newDoctor = doctor1;
+        Doctor result = doctorService.createDoctor(newDoctor);
+
+        assertNotNull(result);
+        assertEquals("D1", result.getId());
+
+        verify(queueService, times(1))
+                .sendToQueue("doctor.queue", newDoctor);
+
+        verifyNoInteractions(doctorRepository);
+    }
+
+    @Test
+    @DisplayName("Should update doctor fields and send updated doctor to queue")
+    void updateDoctor_shouldUpdateFieldsAndSendToQueue() {
+        Doctor existing = doctor1;
+
+        Doctor updatedDoctor = new Doctor();
+        updatedDoctor.setName("Updated Name");
+        updatedDoctor.setEmail("updated@mail.com");
+        updatedDoctor.setPhoneNumber("9999999999");
+        updatedDoctor.setSpecialization("Orthopedic");
+
+        when(doctorRepository.findById("D1"))
+                .thenReturn(Optional.of(existing));
+
+        Doctor result = doctorService.updateDoctor("D1", updatedDoctor);
+
+        assertEquals("Updated Name", result.getName());
+        assertEquals("updated@mail.com", result.getEmail());
+        assertEquals("9999999999", result.getPhoneNumber());
+        assertEquals("Orthopedic", result.getSpecialization());
+
+        verify(doctorRepository, times(1)).findById("D1");
+        verify(queueService, times(1))
+                .sendToQueue("doctor.update.queue", existing);
+    }
+
+    @Test
+    @DisplayName("Should throw ResourceNotFoundException when updating non-existent doctor")
+    void updateDoctor_shouldThrowException_whenDoctorNotFound() {
+        when(doctorRepository.findById("D1"))
+                .thenReturn(Optional.empty());
+
+        Doctor updatedDoctor = doctor2;
+
+        // Act + Assert
+        assertThrows(ResourceNotFoundException.class,
+                () -> doctorService.updateDoctor("D1", updatedDoctor)
+        );
+
+        verify(doctorRepository, times(1)).findById("D1");
+        verifyNoInteractions(queueService);
+    }
+
+    @Test
+    @DisplayName("Should soft delete active doctor and send to delete queue")
+    void softDeleteDoctor_shouldSetInactiveAndSendToQueue() {
+        doctor1.setActive(true);
+        when(doctorRepository.findByIdAndActiveTrue("D1"))
+                .thenReturn(Optional.of(doctor1));
+
+        doctorService.softDeleteDoctor("D1");
+
+        assertFalse(doctor1.getActive());
+
+        verify(doctorRepository, times(1)).findByIdAndActiveTrue("D1");
+        verify(queueService, times(1))
+                .sendToQueue("doctor.delete.queue", doctor1);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when trying to soft delete non-existent or inactive doctor")
+    void softDeleteDoctor_shouldThrowException_whenDoctorNotFound() {
+        when(doctorRepository.findByIdAndActiveTrue("D1"))
+                .thenReturn(Optional.empty());
+
+        // Act + Assert
+        assertThrows(ResourceNotFoundException.class,
+                () -> doctorService.softDeleteDoctor("D1")
+        );
+
+        verify(doctorRepository, times(1)).findByIdAndActiveTrue("D1");
+        verifyNoInteractions(queueService);
+    }
+
 }
