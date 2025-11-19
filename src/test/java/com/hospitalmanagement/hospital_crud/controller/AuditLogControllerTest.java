@@ -147,4 +147,28 @@ class AuditLogControllerTest {
 
         verify(auditLogRepository).findAll(any(PageRequest.class));
     }
+
+    @Test
+    @DisplayName("GET /api/audit-logs/entity/{entityName} - Should handle logs with null entityName")
+    void getLogsByEntityName_shouldHandleNullEntityName() throws Exception {
+
+        AuditLog logNull = new AuditLog();
+        logNull.setId("L3");
+        logNull.setEntityName(null); // ⭐ THIS is the missing test branch
+        logNull.setCreatedAt(Instant.now());
+
+        PageRequest request = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<AuditLog> page = new PageImpl<>(List.of(log1, log2, logNull), request, 3);
+
+        when(auditLogRepository.findAll(any(PageRequest.class))).thenReturn(page);
+
+        mockMvc.perform(get("/api/audit-logs/entity/Doctor")
+                        .param("page", "0")
+                        .param("size", "20"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content.size()").value(1));  // only log1 matches
+
+        verify(auditLogRepository).findAll(any(PageRequest.class));
+    }
+
 }
