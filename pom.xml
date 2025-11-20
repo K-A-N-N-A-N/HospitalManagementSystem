@@ -87,7 +87,13 @@
                 <artifactId>spring-boot-starter-validation</artifactId>
             </dependency>
 
-            <!-- Optional: DevTools -->
+             <!-- Spring Security -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+            </dependency>
+
+        <!-- Optional: DevTools -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-devtools</artifactId>
