@@ -1,4 +1,26 @@
 spring:
+  application:
+    name: HospitalManagementSystem
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    detect-encoding: true
+
   activemq:
     broker-url: tcp://localhost:61616
     user: admin
@@ -9,11 +31,16 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: YourMailid
-    password: YourPassword
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS}
+
