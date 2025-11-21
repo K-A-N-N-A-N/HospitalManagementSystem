@@ -6,6 +6,7 @@ import com.hospitalmanagement.hospital_crud.entity.Appointment;
 import com.hospitalmanagement.hospital_crud.service.AppointmentService;
 import com.hospitalmanagement.hospital_crud.service.AppointmentSummaryService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class AppointmentController {
         this.appointmentSummaryService = appointmentSummaryService;
     }
 
+    @PreAuthorize("hasAnyRole('PATIENT')")
     @PostMapping("/book")
     public ResponseEntity<?> bookAppointment(@RequestBody AppointmentRequest request) {
         try {
@@ -39,6 +41,7 @@ public class AppointmentController {
         return new AppointmentResponse(appointment);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping
     public List<AppointmentResponse> getAllAppointments() {
         return appointmentService.getAllAppointments()
@@ -47,6 +50,7 @@ public class AppointmentController {
                 .toList();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("/active")
     public List<AppointmentResponse> getAllActiveAppointments() {
         return appointmentService.getAllActiveAppointments()

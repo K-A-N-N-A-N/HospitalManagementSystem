@@ -30,7 +30,6 @@ public class PatientController {
         return patientService.getActivePatientById(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("inactive")
     public List<Patient> getPatientByIdInactive() {
         return patientService.getAllInactivePatients();
@@ -55,6 +54,7 @@ public class PatientController {
         return "Patient status set to Inactive.";
     }
 /*
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("delete/{id}")
     public String deletePatientById(@PathVariable String id) {
         patientService.deletePatient(id);

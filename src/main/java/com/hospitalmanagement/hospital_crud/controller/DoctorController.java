@@ -18,7 +18,7 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     @GetMapping("active")
     public List<Doctor> getAllDoctors() {
         return doctorService.getAllActiveDoctors();
@@ -54,6 +54,7 @@ public class DoctorController {
     }
 
     /*
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("delete{id}")
     public String deleteDoctorById(@PathVariable String id) {
         doctorService.deleteDoctor(id);

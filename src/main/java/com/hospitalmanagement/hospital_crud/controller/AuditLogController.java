@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class AuditLogController {
     private final AuditLogRepository auditLogRepository;
 
     //Get all audit logs with pagination and sorting by creation time (newest first)
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public Page<AuditLog> getAllLogs(
             @RequestParam(defaultValue = "0") int page,
@@ -32,6 +34,7 @@ public class AuditLogController {
     }
 
     //Get a specific audit log by its ID
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public AuditLog getAuditLogById(@PathVariable String id) {
         return auditLogRepository.findById(id)
@@ -39,6 +42,7 @@ public class AuditLogController {
     }
 
     //Optional: Filter by entity name (e.g., Doctor, Patient)
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/entity/{entityName}")
     public Page<AuditLog> getLogsByEntityName(
             @PathVariable String entityName,
