@@ -6,6 +6,7 @@ import com.hospitalmanagement.hospital_crud.dto.UpdateSlotDTO;
 import com.hospitalmanagement.hospital_crud.entity.DoctorSlot;
 import com.hospitalmanagement.hospital_crud.service.DoctorSlotService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class DoctorSlotController {
     }
 
     // Generate default slots for a doctor on a date
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @PostMapping("/generate")
     public ResponseEntity<List<DoctorSlot>> generateSlots(@RequestBody SlotRequestDTO request) {
         List<DoctorSlot> slots = slotService.generateSlots(request.getDoctorId(), request.getDate(), request.getDurationMinutes());
@@ -30,6 +32,7 @@ public class DoctorSlotController {
     }
 
     // Get all Scheduled Slots for a specific doctor
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @GetMapping("/scheduledSlots")
     public ResponseEntity<List<DoctorSlotResponse>> scheduledSlots(@RequestParam String doctorId, @RequestParam LocalDate date) {
         List<DoctorSlotResponse> slots = slotService
@@ -64,6 +67,7 @@ public class DoctorSlotController {
         return ResponseEntity.ok(message);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteSlots(@RequestBody SlotRequestDTO request) {
         String result = slotService.deleteSlotsForDate(request.getDoctorId(), request.getDate());

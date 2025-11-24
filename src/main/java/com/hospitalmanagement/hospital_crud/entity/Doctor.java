@@ -1,5 +1,6 @@
 package com.hospitalmanagement.hospital_crud.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -39,6 +40,14 @@ public class Doctor extends BaseEntity implements Serializable {
 
     private String photoPath;
     private Boolean active = true;
+
+    @Transient
+    @JsonIgnore
+    private String username;
+
+    @Transient
+    @JsonIgnore
+    private String rawPassword;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
