@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Field;
 
@@ -95,6 +96,51 @@ class AuditLogServiceTest {
 
         assertTrue(exception.getMessage().contains("Failed to serialize audit data"));
     }
+
+    @Test
+    @DisplayName("Should create and save audit log for login event")
+    void logLoginEvent_shouldSaveAuditLog() {
+
+        // We capture the AuditLog object passed to repository
+        ArgumentCaptor<AuditLog> captor = ArgumentCaptor.forClass(AuditLog.class);
+
+        when(auditLogRepository.save(any(AuditLog.class))).thenReturn(new AuditLog());
+
+        auditLogService.logLoginEvent("U1", "john", "ADMIN");
+
+        verify(auditLogRepository, times(1)).save(captor.capture());
+
+        AuditLog saved = captor.getValue();
+
+        assertEquals("User", saved.getEntityName());
+        assertEquals("U1", saved.getEntityId());
+        assertEquals("LOGIN", saved.getAction());
+        assertEquals("john", saved.getPerformedBy());
+        assertEquals("ADMIN", saved.getRole());
+
+        // Ensure JSON changes are correctly created
+        assertTrue(saved.getChanges().contains("\"message\":\"User logged in\""));
+        assertTrue(saved.getChanges().contains("\"userId\":\"U1\""));
+        assertTrue(saved.getChanges().contains("\"username\":\"john\""));
+        assertTrue(saved.getChanges().contains("\"role\":\"ADMIN\""));
+    }
+
+    @Test
+    @DisplayName("Should throw SystemOperationException when logLoginEvent fails to save")
+    void logLoginEvent_shouldThrow_whenSaveFails() {
+
+        when(auditLogRepository.save(any(AuditLog.class)))
+                .thenThrow(new RuntimeException("DB down"));
+
+        SystemOperationException ex = assertThrows(
+                SystemOperationException.class,
+                () -> auditLogService.logLoginEvent("U1", "john", "ADMIN")
+        );
+
+        assertTrue(ex.getMessage().contains("Failed to save audit record"));
+        verify(auditLogRepository, times(1)).save(any(AuditLog.class));
+    }
+
 
     private record TestPayload(String data) {}
 }
