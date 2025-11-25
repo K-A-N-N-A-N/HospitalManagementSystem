@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -37,6 +39,26 @@ public class AuditLogService {
                     "Failed to save audit record for entity: " + auditLog.getEntityName(), ex);
         }
     }
+
+    public void logLoginEvent(String userId, String username, String role) {
+
+        AuditLog audit = new AuditLog();
+        audit.setEntityName("User");
+        audit.setEntityId(userId);
+        audit.setAction("LOGIN");
+        audit.setPerformedBy(username);
+        audit.setRole(role);
+
+        audit.setChanges(toJson(Map.of(
+                "message", "User logged in",
+                "userId", userId,
+                "username", username,
+                "role", role
+        )));
+
+        save(audit);
+    }
+
 
     public String toJson(Object obj) {
         try {

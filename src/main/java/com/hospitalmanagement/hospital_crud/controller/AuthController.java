@@ -5,6 +5,7 @@ import com.hospitalmanagement.hospital_crud.dto.LoginRequest;
 import com.hospitalmanagement.hospital_crud.dto.JwtResponse;
 import com.hospitalmanagement.hospital_crud.entity.User;
 import com.hospitalmanagement.hospital_crud.repository.UserRepository;
+import com.hospitalmanagement.hospital_crud.service.AuditLogService;
 import com.hospitalmanagement.hospital_crud.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
+    private final AuditLogService auditLogService;
 
     @PostMapping("/login")
     public JwtResponse login(@RequestBody LoginRequest request) {
@@ -29,6 +31,12 @@ public class AuthController {
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
+
+        auditLogService.logLoginEvent(
+                user.getId(),
+                user.getUsername(),
+                user.getRole().name()
+        );
 
         String token = jwtService.generateToken(
                 user.getId(),
