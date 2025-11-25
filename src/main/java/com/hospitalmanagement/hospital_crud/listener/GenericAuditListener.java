@@ -7,12 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hospitalmanagement.hospital_crud.config.SpringContext;
 import com.hospitalmanagement.hospital_crud.entity.AuditLog;
 import com.hospitalmanagement.hospital_crud.service.AuditLogService;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreRemove;
 import jakarta.persistence.PreUpdate;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -48,6 +51,8 @@ public class GenericAuditListener {
 
             String entityName = entity.getClass().getSimpleName();
             String entityId = getEntityId(entity);
+            String username = getCurrentUsername();
+            String role = getCurrentRole();
 
             // Detect soft delete (if entity has 'active' field and it's false)
             String finalAction = action;
@@ -68,8 +73,8 @@ public class GenericAuditListener {
             auditLog.setEntityName(entityName);
             auditLog.setEntityId(entityId == null ? "UNKNOWN" : entityId);
             auditLog.setAction(finalAction);
-            auditLog.setPerformedBy("SYSTEM"); // default until auth is added
-            auditLog.setRole(null);
+            auditLog.setPerformedBy(username);
+            auditLog.setRole(role);
             auditLog.setChanges(changesJson);
 
             auditService.save(auditLog);
@@ -120,7 +125,7 @@ public class GenericAuditListener {
 
     private Map<String, Object> toMap(Object obj) {
         try {
-            // Unproxy first
+            // Un proxy first
             Object unproxied = org.hibernate.Hibernate.unproxy(obj);
 
             // Remove all @ManyToOne / @OneToMany / @OneToOne / @ManyToMany lazy fields
@@ -231,4 +236,33 @@ public class GenericAuditListener {
             return idStr;
         }
     }
+
+    private String getCurrentUsername() {
+        try {
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || auth.getName() == null || auth.getName().equals("anonymousUser")) {
+                return "SYSTEM";
+            }
+            return auth.getName();
+        } catch (Exception e) {
+            return "SYSTEM";
+        }
+    }
+
+    private String getCurrentRole() {
+        try {
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || auth.getAuthorities() == null) {
+                return null;
+            }
+
+            return auth.getAuthorities().stream()
+                    .findFirst()
+                    .map(a -> a.getAuthority().replace("ROLE_", ""))
+                    .orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }
