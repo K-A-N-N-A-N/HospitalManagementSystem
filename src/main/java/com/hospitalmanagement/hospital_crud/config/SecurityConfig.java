@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)                  // for forbidden access (403)
                 )                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/mule/test").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // Everything else → must be authenticated
