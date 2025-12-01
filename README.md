@@ -41,11 +41,21 @@ It ensures efficient coordination between doctors, patients, and administrative 
    ```bash
     cd hospital-management-system
 
-3. **Build and run**
+3. **Start ActiveMQ (Required Before Running the Application)**
+   ```bash
+   #Windows
+    activemq start
+   #Mac/Linux
+   ./activemq start
+   
+    #Example
+   cd C:\Users\hp\Downloads\apache-activemq-6.1.8-bin\apache-activemq-6.1.8\bin
+    .\activemq.bat start
+
+4. **Build and run**
    ```bash
     mvn clean install
     mvn spring-boot:run
 
-
-4. **Access API Documentation**
+5. **Access API Documentation**
     http://localhost:8080/swagger-ui/index.html

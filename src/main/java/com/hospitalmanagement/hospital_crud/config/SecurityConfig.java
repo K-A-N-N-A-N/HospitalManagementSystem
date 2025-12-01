@@ -5,6 +5,7 @@ import com.hospitalmanagement.hospital_crud.security.JwtAuthenticationFilter;
 import com.hospitalmanagement.hospital_crud.service.CustomUserDetailsService;
 import com.hospitalmanagement.hospital_crud.service.JwtService;
 import com.hospitalmanagement.hospital_crud.exceptions.CustomAccessDeniedHandler;
+import com.hospitalmanagement.hospital_crud.exceptions.CustomAuthenticationEntryPoint;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final CustomAccessDeniedHandler accessDeniedHandler;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,9 +42,12 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler))
-                .authorizeHttpRequests(auth -> auth
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)   // for invalid/expired token
+                        .accessDeniedHandler(accessDeniedHandler)                  // for forbidden access (403)
+                )                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/mule/test").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                         // Everything else → must be authenticated

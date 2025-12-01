@@ -1,11 +1,14 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
+import com.hospitalmanagement.hospital_crud.dto.LoggedInUserResponse;
 import com.hospitalmanagement.hospital_crud.dto.LoginRequest;
 import com.hospitalmanagement.hospital_crud.dto.JwtResponse;
 import com.hospitalmanagement.hospital_crud.entity.User;
 import com.hospitalmanagement.hospital_crud.repository.UserRepository;
+import com.hospitalmanagement.hospital_crud.service.AuditLogService;
 import com.hospitalmanagement.hospital_crud.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final JwtService jwtService;
+    private final AuditLogService auditLogService;
 
     @PostMapping("/login")
     public JwtResponse login(@RequestBody LoginRequest request) {
@@ -28,6 +32,12 @@ public class AuthController {
             throw new RuntimeException("Invalid username or password");
         }
 
+        auditLogService.logLoginEvent(
+                user.getId(),
+                user.getUsername(),
+                user.getRole().name()
+        );
+
         String token = jwtService.generateToken(
                 user.getId(),
                 user.getUsername(),
@@ -36,4 +46,27 @@ public class AuthController {
 
         return new JwtResponse(token, "Bearer", jwtService.expiryDate().getTime());
     }
+
+    @GetMapping("/me")
+    public LoggedInUserResponse getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("User is not authenticated");
+        }
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new LoggedInUserResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getRole().name(),
+                user.getDoctorId(),
+                user.getPatientId()
+        );
+    }
+
 }
