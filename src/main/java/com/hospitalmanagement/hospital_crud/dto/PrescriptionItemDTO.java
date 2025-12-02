@@ -12,4 +12,7 @@ public class PrescriptionItemDTO {
     private String medicineName;
     private String dosage;
     private String notes;
+
+    private String sku;
+    private int quantity;
 }

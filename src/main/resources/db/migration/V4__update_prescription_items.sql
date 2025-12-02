@@ -1,0 +1,3 @@
+ALTER TABLE prescription_item
+ADD COLUMN sku VARCHAR(100) NOT NULL,
+ADD COLUMN quantity INT NOT NULL;
