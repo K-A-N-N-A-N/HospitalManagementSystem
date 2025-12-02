@@ -32,4 +32,13 @@ public class PharmacyIntegrationService {
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .block();
     }
+
+    public Map<String, Object> validatePrescription(Map<String, Object> payload) {
+        return muleClient.post()
+                .uri("/pharmacy/validate-prescription")
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
 }
