@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/mule/test").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/pharmacy/**").authenticated()
 
                         // Everything else → must be authenticated
                         .anyRequest().authenticated()
