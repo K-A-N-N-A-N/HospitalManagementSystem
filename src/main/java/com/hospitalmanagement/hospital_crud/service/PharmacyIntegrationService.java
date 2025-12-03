@@ -41,4 +41,14 @@ public class PharmacyIntegrationService {
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                 .block();
     }
+
+    public Map<String, Object> getPaymentSummary(Map<String, Object> payload) {
+        return muleClient.post()
+                .uri("/pharmacy/payment-summary")
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+
 }

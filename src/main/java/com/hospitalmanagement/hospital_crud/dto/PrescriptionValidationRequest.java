@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PrescriptionValidationRequest {
     private String prescriptionId;
+    private String patientId;
     private List<PrescriptionValidationItem> items;
 }

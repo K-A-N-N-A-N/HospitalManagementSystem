@@ -1,6 +1,9 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
+import com.hospitalmanagement.hospital_crud.entity.Prescription;
+import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
+import com.hospitalmanagement.hospital_crud.repository.PrescriptionRepository;
 import com.hospitalmanagement.hospital_crud.service.PharmacyIntegrationService;
 import com.hospitalmanagement.hospital_crud.service.PrescriptionService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class PharmacyController {
 
     private final PharmacyIntegrationService pharmacyService;
     private final PrescriptionService prescriptionService;
+    private final PrescriptionRepository prescriptionRepository;
 
     @GetMapping("/medicines/all")
     public ResponseEntity<?> getAll() {
@@ -34,7 +38,13 @@ public class PharmacyController {
 
         PrescriptionDTO prescription = prescriptionService.getPrescriptionById(prescriptionId);
 
-        List<Map<String, Object>> items = prescription.getMedicines().stream()
+        Prescription prescriptionEntity = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
+
+        String patientId = prescriptionEntity.getAppointment().getPatient().getId();
+
+
+        List<Map<String, Object>> items = prescriptionEntity.getMedicines().stream()
                 .map(item -> {
                     Map<String, Object> map = new HashMap<>();
                     map.put("sku", item.getSku());
@@ -43,10 +53,13 @@ public class PharmacyController {
                 })
                 .toList();
 
+        // Build payload for Mule
         Map<String, Object> payload = Map.of(
                 "prescriptionId", prescriptionId,
+                "patientId", patientId,
                 "items", items
         );
+
 
         Map<String, Object> result = pharmacyService.validatePrescription(payload);
 
