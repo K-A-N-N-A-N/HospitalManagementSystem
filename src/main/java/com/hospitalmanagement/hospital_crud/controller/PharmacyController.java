@@ -66,5 +66,32 @@ public class PharmacyController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/payment-summary/{prescriptionId}")
+    public ResponseEntity<?> getPaymentSummary(@PathVariable String prescriptionId) {
+
+        Prescription prescriptionEntity = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
+
+        String patientId = prescriptionEntity.getAppointment().getPatient().getId();
+
+        List<Map<String, Object>> items = prescriptionEntity.getMedicines().stream()
+                .map(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("sku", item.getSku());
+                    map.put("quantity", item.getQuantity());
+                    return map;
+                })
+                .toList();
+
+        Map<String, Object> payload = Map.of(
+                "prescriptionId", prescriptionId,
+                "patientId", patientId,
+                "items", items
+        );
+
+        Map<String, Object> result = pharmacyService.getPaymentSummary(payload);
+
+        return ResponseEntity.ok(result);
+    }
 
 }
