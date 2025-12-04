@@ -7,6 +7,7 @@ import com.hospitalmanagement.hospital_crud.repository.PrescriptionRepository;
 import com.hospitalmanagement.hospital_crud.service.PharmacyIntegrationService;
 import com.hospitalmanagement.hospital_crud.service.PrescriptionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/pharmacy")
 @RequiredArgsConstructor
@@ -91,6 +93,15 @@ public class PharmacyController {
 
         Map<String, Object> result = pharmacyService.getPaymentSummary(payload);
 
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/confirm-payment/{purchaseId}")
+    public ResponseEntity<?> confirmPayment(@PathVariable String purchaseId) {
+
+        Map<String, Object> result = pharmacyService.confirmPayment(purchaseId);
+
+        log.info("Confirming payment for purchaseId = {}", purchaseId);
         return ResponseEntity.ok(result);
     }
 

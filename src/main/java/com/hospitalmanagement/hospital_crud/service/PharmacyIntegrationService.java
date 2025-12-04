@@ -51,4 +51,12 @@ public class PharmacyIntegrationService {
                 .block();
     }
 
+    public Map<String, Object> confirmPayment(String purchaseId) {
+        return muleClient.post()
+                .uri("/pharmacy/confirm-payment/" + purchaseId)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                .block();
+    }
+
 }
