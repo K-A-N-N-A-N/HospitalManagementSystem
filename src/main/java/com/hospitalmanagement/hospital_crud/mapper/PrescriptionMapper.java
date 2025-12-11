@@ -25,6 +25,10 @@ public class PrescriptionMapper {
                         itemDTO.setMedicineName(item.getMedicineName());
                         itemDTO.setDosage(item.getDosage());
                         itemDTO.setNotes(item.getNotes());
+
+                        itemDTO.setQuantity(item.getQuantity());
+                        itemDTO.setSku(item.getSku());
+
                         return itemDTO;
                     }).collect(Collectors.toList())
             );
@@ -38,7 +42,6 @@ public class PrescriptionMapper {
         prescription.setCreatedAt(dto.getCreatedAt());
         prescription.setUpdatedAt(dto.getUpdatedAt());
 
-        //Convert DTO appointment_id -> Appointment Refrence
         Appointment appointment = new Appointment();
         appointment.setId(dto.getAppointment_id());
         prescription.setAppointment(appointment);
@@ -51,11 +54,18 @@ public class PrescriptionMapper {
                         item.setMedicineName(itemDTO.getMedicineName());
                         item.setDosage(itemDTO.getDosage());
                         item.setNotes(itemDTO.getNotes());
-                        item.setPrescription(prescription); // important for relationship
+
+                        item.setSku(itemDTO.getSku());
+                        item.setQuantity(itemDTO.getQuantity());
+
+                        item.setPrescription(prescription);
+
                         return item;
                     }).collect(Collectors.toList())
             );
         }
+
         return prescription;
     }
+
 }

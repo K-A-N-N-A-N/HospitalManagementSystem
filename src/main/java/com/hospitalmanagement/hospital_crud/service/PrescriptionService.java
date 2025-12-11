@@ -97,6 +97,10 @@ public class PrescriptionService {
                 item.setMedicineName(itemDTO.getMedicineName());
                 item.setDosage(itemDTO.getDosage());
                 item.setNotes(itemDTO.getNotes());
+
+                item.setSku(itemDTO.getSku());
+                item.setQuantity(itemDTO.getQuantity());
+
                 item.setPrescription(existing);
                 existing.getMedicines().add(item);
             }

@@ -1,19 +1,29 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
+import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
+import com.hospitalmanagement.hospital_crud.entity.Prescription;
+import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
+import com.hospitalmanagement.hospital_crud.repository.PrescriptionRepository;
 import com.hospitalmanagement.hospital_crud.service.PharmacyIntegrationService;
+import com.hospitalmanagement.hospital_crud.service.PrescriptionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/pharmacy")
 @RequiredArgsConstructor
 public class PharmacyController {
 
     private final PharmacyIntegrationService pharmacyService;
+    private final PrescriptionService prescriptionService;
+    private final PrescriptionRepository prescriptionRepository;
 
     @GetMapping("/medicines/all")
     public ResponseEntity<?> getAll() {
@@ -24,4 +34,75 @@ public class PharmacyController {
     public ResponseEntity<?> getLite(@PathVariable String sku) {
         return ResponseEntity.ok(pharmacyService.getLiteMedicine(sku));
     }
+
+    @PostMapping("/validate-prescription/{prescriptionId}")
+    public ResponseEntity<?> validatePrescription(@PathVariable String prescriptionId) {
+
+        PrescriptionDTO prescription = prescriptionService.getPrescriptionById(prescriptionId);
+
+        Prescription prescriptionEntity = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
+
+        String patientId = prescriptionEntity.getAppointment().getPatient().getId();
+
+
+        List<Map<String, Object>> items = prescriptionEntity.getMedicines().stream()
+                .map(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("sku", item.getSku());
+                    map.put("quantity", item.getQuantity());
+                    return map;
+                })
+                .toList();
+
+        // Build payload for Mule
+        Map<String, Object> payload = Map.of(
+                "prescriptionId", prescriptionId,
+                "patientId", patientId,
+                "items", items
+        );
+
+
+        Map<String, Object> result = pharmacyService.validatePrescription(payload);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/payment-summary/{prescriptionId}")
+    public ResponseEntity<?> getPaymentSummary(@PathVariable String prescriptionId) {
+
+        Prescription prescriptionEntity = prescriptionRepository.findById(prescriptionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
+
+        String patientId = prescriptionEntity.getAppointment().getPatient().getId();
+
+        List<Map<String, Object>> items = prescriptionEntity.getMedicines().stream()
+                .map(item -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("sku", item.getSku());
+                    map.put("quantity", item.getQuantity());
+                    return map;
+                })
+                .toList();
+
+        Map<String, Object> payload = Map.of(
+                "prescriptionId", prescriptionId,
+                "patientId", patientId,
+                "items", items
+        );
+
+        Map<String, Object> result = pharmacyService.getPaymentSummary(payload);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/confirm-payment/{purchaseId}")
+    public ResponseEntity<?> confirmPayment(@PathVariable String purchaseId) {
+
+        Map<String, Object> result = pharmacyService.confirmPayment(purchaseId);
+
+        log.info("Confirming payment for purchaseId = {}", purchaseId);
+        return ResponseEntity.ok(result);
+    }
+
 }

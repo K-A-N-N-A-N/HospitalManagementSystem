@@ -24,7 +24,7 @@ public class AppointmentController {
         this.appointmentSummaryService = appointmentSummaryService;
     }
 
-    @PreAuthorize("hasAnyRole('PATIENT')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'ADMIN')")
     @PostMapping("/book")
     public ResponseEntity<?> bookAppointment(@RequestBody AppointmentRequest request) {
         try {

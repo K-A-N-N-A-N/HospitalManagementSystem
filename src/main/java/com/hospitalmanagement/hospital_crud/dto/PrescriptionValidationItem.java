@@ -7,12 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrescriptionItemDTO {
-    private String id;
-    private String medicineName;
-    private String dosage;
-    private String notes;
-
+public class PrescriptionValidationItem {
     private String sku;
     private int quantity;
 }

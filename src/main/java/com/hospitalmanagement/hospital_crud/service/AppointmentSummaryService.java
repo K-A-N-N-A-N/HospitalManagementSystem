@@ -50,7 +50,9 @@ public class AppointmentSummaryService {
                         item.getId(),
                         item.getMedicineName(),
                         item.getDosage(),
-                        item.getNotes()
+                        item.getNotes(),
+                        item.getSku(),
+                        item.getQuantity()
                 ))
                 .collect(Collectors.toList());
 
