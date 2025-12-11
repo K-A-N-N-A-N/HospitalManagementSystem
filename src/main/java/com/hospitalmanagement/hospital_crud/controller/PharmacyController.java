@@ -1,6 +1,7 @@
 package com.hospitalmanagement.hospital_crud.controller;
 
 import com.hospitalmanagement.hospital_crud.dto.PrescriptionDTO;
+import com.hospitalmanagement.hospital_crud.entity.Patient;
 import com.hospitalmanagement.hospital_crud.entity.Prescription;
 import com.hospitalmanagement.hospital_crud.exceptions.ResourceNotFoundException;
 import com.hospitalmanagement.hospital_crud.repository.PrescriptionRepository;
@@ -74,7 +75,11 @@ public class PharmacyController {
         Prescription prescriptionEntity = prescriptionRepository.findById(prescriptionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescription not found"));
 
-        String patientId = prescriptionEntity.getAppointment().getPatient().getId();
+        Patient patient = prescriptionEntity.getAppointment().getPatient();
+
+        String patientId = patient.getId();
+        String patientName = patient.getName();
+        String patientEmail = patient.getEmail();
 
         List<Map<String, Object>> items = prescriptionEntity.getMedicines().stream()
                 .map(item -> {
@@ -88,6 +93,8 @@ public class PharmacyController {
         Map<String, Object> payload = Map.of(
                 "prescriptionId", prescriptionId,
                 "patientId", patientId,
+                "patientName", patientName,
+                "patientEmail", patientEmail,
                 "items", items
         );
 
