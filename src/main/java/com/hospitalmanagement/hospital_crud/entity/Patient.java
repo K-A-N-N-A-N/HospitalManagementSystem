@@ -42,11 +42,9 @@ public class Patient extends BaseEntity implements Serializable {
     private Boolean active = true;
 
     @Transient
-    @JsonIgnore
     private String username;
 
     @Transient
-    @JsonIgnore
     private String rawPassword;
 
     @CreatedDate

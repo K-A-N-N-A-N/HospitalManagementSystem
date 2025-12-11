@@ -41,11 +41,11 @@ public class PatientListener {
             user.setUsername(patient.getUsername());
             user.setPassword(bCryptPasswordEncoder.encode(patient.getRawPassword()));
             user.setRole(Role.PATIENT);
-            user.setDoctorId(patient.getId());
+            user.setPatientId(patient.getId());
 
             userRepository.save(user);
 
-            log.info("User created for doctor: {}", patient.getUsername());
+            log.info("User created for patient: {}", patient.getUsername());
         }
     }
 
